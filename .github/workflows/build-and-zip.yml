@@ -1,4 +1,4 @@
-name: Build All Projects and Package
+name: Build All Projects
 
 on:
   push:
@@ -31,14 +31,8 @@ jobs:
           cd ..
         done
 
-    - name: Zip All Builds into One Archive
-      run: |
-        cd build-output
-        zip -r ../all-projects-build.zip .
-        cd ..
-
-    - name: Upload Combined Zip Artifact
+    - name: Upload Build Output
       uses: actions/upload-artifact@v4
       with:
-        name: all-projects-build
-        path: all-projects-build.zip
+        name: built-projects
+        path: build-output/
