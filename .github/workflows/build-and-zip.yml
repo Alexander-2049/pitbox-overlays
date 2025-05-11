@@ -1,39 +1,44 @@
-name: Build and Zip All Projects
+name: Build All Projects and Package
 
 on:
   push:
-    branches: [ main ]  # or whichever branch you want
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'  # or whatever version you need
+        node-version: '18'
 
-    - name: Install, Build and Zip All Projects
+    - name: Install and Build All Projects
       run: |
+        mkdir build-output
         for dir in */ ; do
           echo "Processing $dir"
           cd "$dir"
           if [ -f package.json ]; then
             npm install
             npm run build
-            cd dist
-            zip -r "../../${dir%/}-build.zip" .
-            cd ../..
+            cp -r dist "../build-output/${dir%/}"
           fi
+          cd ..
         done
 
-    - name: Upload Artifacts
+    - name: Zip All Builds into One Archive
+      run: |
+        cd build-output
+        zip -r ../all-projects-build.zip .
+        cd ..
+
+    - name: Upload Combined Zip Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: built-zips
-        path: |
-          *.zip
+        name: all-projects-build
+        path: all-projects-build.zip
