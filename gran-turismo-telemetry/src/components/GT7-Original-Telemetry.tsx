@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const BASE_WIDTH = 396;
 const BASE_HEIGHT = 108;
@@ -10,6 +11,7 @@ interface Props {
   gear: number;
   rpm: number;
   rpmStageFirst: number;
+  rpmStageShift: number;
   rpmStageLast: number;
   rpmStageBlink: number;
 }
@@ -20,13 +22,15 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
   displayUnits,
   gear,
   rpm,
-  rpmStageBlink,
   rpmStageFirst,
+  rpmStageShift,
   rpmStageLast,
+  rpmStageBlink,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [coloredRpmBlocksAmount, setColoredRpmBlocksAmount] = useState(0);
   const [rpmBarColor, setRpmBarColor] = useState<string>("#fb0004");
+  const [isBlinking, setIsBlinking] = useState(false);
   const [fontLoaded, setFontLoaded] = useState(false);
 
   const rpmBackgroundBarColor = "#eeeeee";
@@ -41,7 +45,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
   const calculateRpmPercentage = useCallback(() => {
     if (rpmStageFirst === 0 || rpmStageLast === 0) return 0;
 
-    // Calculate normalized RPM percentage between first stage and last stage
+    // Calculate normalized RPM percentage between first stage and shift stage
     const currentRpm = rpm;
     const rpmRange = rpmStageLast - rpmStageFirst;
     const rpmProgress = (currentRpm - rpmStageFirst) / rpmRange;
@@ -52,11 +56,60 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
   useEffect(() => {
     const rpmPercentage = calculateRpmPercentage();
     setColoredRpmBlocksAmount(Math.floor(rpmPercentage));
-  }, [rpm, rpmStageBlink, rpmStageFirst, rpmStageLast, calculateRpmPercentage]);
+  }, [rpm, rpmStageFirst, rpmStageShift, calculateRpmPercentage]);
+
+  // Add this useEffect to handle the RPM color logic
+  useEffect(() => {
+    const rpmPercentage = calculateRpmPercentage() / 100;
+
+    // Check if we're at or above the last stage (blinking threshold)
+    if (rpm >= rpmStageBlink) {
+      setIsBlinking(true);
+    } else if (rpmPercentage <= 0.5) {
+      // In range 0 to 1/2: Keep red
+      setRpmBarColor("#fb0004");
+      setIsBlinking(false);
+    } else if (rpmPercentage <= 1) {
+      // In range 1/2 to 1: Fade from red to white/blue
+      // Calculate how far we are between 0.5 and 1 (0 to 1 range)
+      const fadeProgress = (rpmPercentage - 0.5) * 2; // 0 at 0.5 RPM, 1 at 1.0 RPM
+
+      // Interpolate between colors
+      const startColor = { r: 251, g: 0, b: 4 }; // #fb0004
+      const endColor = { r: 217, g: 196, b: 215 }; // #cf9ccd
+
+      const r = Math.round(
+        startColor.r + (endColor.r - startColor.r) * fadeProgress
+      );
+      const g = Math.round(
+        startColor.g + (endColor.g - startColor.g) * fadeProgress
+      );
+      const b = Math.round(
+        startColor.b + (endColor.b - startColor.b) * fadeProgress
+      );
+
+      setRpmBarColor(`rgb(${r}, ${g}, ${b})`);
+      setIsBlinking(false);
+    }
+  }, [calculateRpmPercentage, rpm, rpmStageLast, rpmStageBlink]);
+
+  // Add this useEffect for the blinking effect
+  useEffect(() => {
+    if (!isBlinking) return;
+
+    // Blink between #69c3c2 and background color at 1/20 second intervals
+    const blinkInterval = setInterval(() => {
+      setRpmBarColor((prev) =>
+        prev === "#69c3c2" ? rpmBackgroundBarColor : "#69c3c2"
+      );
+    }, 50); // 1/20 of a second = 50ms
+
+    return () => clearInterval(blinkInterval);
+  }, [isBlinking, rpmBackgroundBarColor]);
 
   // Example variable for text
-  const speedText: string = speed.toString();
-  const gearText: string = gear.toString();
+  const speedText: string = Math.floor(speed).toString();
+  const gearText: string = gear === 0 ? "N" : gear < 0 ? "R" : gear.toString();
   const speedUnitText: string = speedUnit;
 
   useEffect(() => {
@@ -83,6 +136,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.translate(offsetX, offsetY);
       ctx.scale(scale, scale);
+      ctx.fillStyle = "#FFFFFF";
 
       const componentWidth = BASE_WIDTH;
       const componentHeight = BASE_HEIGHT;
@@ -114,7 +168,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
 
       // Top line
       // Draw N blocks along the top curve, separated by a gap
-      const numBlocks = 80; // Number of blocks (make this a prop or variable as needed)
+      const numBlocks = 90; // Number of blocks (make this a prop or variable as needed)
       const gap = 1.5; // Gap between blocks in px (make this a prop or variable as needed)
 
       // Calculate the total length of the curve (approximate with straight line for simplicity)
@@ -194,6 +248,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
       }
 
       // Vertical line
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(
         BASE_WIDTH / 2 - BASE_WIDTH / 220 / 2, // X
         BASE_HEIGHT / 3, // Y
