@@ -23,6 +23,7 @@ export default function RacingHUD() {
     data: Record<string, number | string>;
   };
 
+  const [backgroundOpacity, setBackgroundOpacity] = useState(0.4);
   const [gear, setGear] = useState(0);
   const [speedKph, setSpeedKph] = useState(0);
   const [speedMph, setSpeedMph] = useState(0);
@@ -33,6 +34,16 @@ export default function RacingHUD() {
   const [rpmStageShift, setRpmStageShift] = useState(0);
   const [rpmStageLast, setRpmStageLast] = useState(0);
   const [rpmStageBlink, setRpmStageBlink] = useState(0);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const backgroundOpacity = urlParams.get("backgroundOpacity");
+    if (backgroundOpacity === null) return;
+    let opacity = Number(backgroundOpacity);
+    if (isNaN(opacity)) return;
+    opacity = Math.max(0, Math.min(100, opacity));
+    setBackgroundOpacity(opacity / 100);
+  }, []);
 
   useEffect(() => {
     const getNumberValue = (key: string, defaultValue: number) =>
@@ -83,6 +94,7 @@ export default function RacingHUD() {
       rpmStageBlink={rpmStageBlink}
       speedKph={speedKph}
       speedMph={speedMph}
+      backgroundOpacity={backgroundOpacity}
     />
   );
 }

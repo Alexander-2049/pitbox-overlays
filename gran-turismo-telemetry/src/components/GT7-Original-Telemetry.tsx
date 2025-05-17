@@ -14,6 +14,7 @@ interface Props {
   rpmStageShift: number;
   rpmStageLast: number;
   rpmStageBlink: number;
+  backgroundOpacity?: number;
 }
 
 const GT7OriginalTelemetry: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
   rpmStageShift,
   rpmStageLast,
   rpmStageBlink,
+  backgroundOpacity = 0.4,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [coloredRpmBlocksAmount, setColoredRpmBlocksAmount] = useState(0);
@@ -162,7 +164,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
       ctx.closePath();
 
       ctx.fillStyle = "#000000";
-      ctx.globalAlpha = 0.3;
+      ctx.globalAlpha = backgroundOpacity;
       ctx.fill();
       ctx.globalAlpha = 1.0;
 
@@ -353,6 +355,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
     speedText,
     speedUnitText,
     rpmBarColor,
+    backgroundOpacity,
   ]);
 
   return (

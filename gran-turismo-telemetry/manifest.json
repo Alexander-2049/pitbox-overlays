@@ -2,6 +2,18 @@
   "author": "Sim Racing Universe",
   "name": "Gran Turismo 7 Telemetry",
   "type": "telemetry",
-  "defaultHeight": 150,
-  "defaultWidth": 400
+  "defaultHeight": 108,
+  "defaultWidth": 396,
+  "settings": [
+    {
+      "id": "backgroundOpacity",
+      "type": "slider",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "percentage",
+      "group": "Visuals",
+      "defaultValue": 0.4
+    }
+  ]
 }
