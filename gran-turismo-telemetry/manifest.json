@@ -8,12 +8,13 @@
     {
       "id": "backgroundOpacity",
       "type": "slider",
+      "name": "Background Opacity",
       "min": 0,
       "max": 100,
       "step": 1,
       "unit": "percentage",
       "group": "Visuals",
-      "defaultValue": 0.4
+      "defaultValue": 40
     }
   ]
 }
