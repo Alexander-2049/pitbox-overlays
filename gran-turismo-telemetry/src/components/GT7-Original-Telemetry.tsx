@@ -314,7 +314,11 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
       });
 
       if (steeringPointPosition !== null) {
-        const drawDotOnCurve = (position: number) => {
+        const drawDotOnCurve = (
+          position: number,
+          color = "#fb0004",
+          globalAlpha = 1
+        ) => {
           const startX = 0;
           const startY =
             componentHeight - backgroundHeight * 0.87 - backgroundHeight * 0.07;
@@ -338,11 +342,13 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
 
           // Draw the dot
           ctx.beginPath();
-          ctx.arc(x, y, 2, 0, 2 * Math.PI);
-          ctx.fillStyle = "red";
+          ctx.arc(x, y, 2.6, 0, 2 * Math.PI);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = globalAlpha;
           ctx.fill();
         };
 
+        drawDotOnCurve(0, "#ffffff", 0.6);
         drawDotOnCurve(steeringPointPosition);
       }
     };
