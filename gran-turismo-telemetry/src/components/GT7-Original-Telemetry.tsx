@@ -15,6 +15,7 @@ interface Props {
   rpmStageLast: number;
   rpmStageBlink: number;
   backgroundOpacity?: number;
+  steeringPointPosition?: number | null;
 }
 
 const GT7OriginalTelemetry: React.FC<Props> = ({
@@ -28,6 +29,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
   rpmStageLast,
   rpmStageBlink,
   backgroundOpacity = 0.4,
+  steeringPointPosition = null,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [coloredRpmBlocksAmount, setColoredRpmBlocksAmount] = useState(0);
@@ -310,6 +312,39 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
         y: BASE_HEIGHT / 1.15,
         color: "#fbfbfb",
       });
+
+      if (steeringPointPosition !== null) {
+        const drawDotOnCurve = (position: number) => {
+          const startX = 0;
+          const startY =
+            componentHeight - backgroundHeight * 0.87 - backgroundHeight * 0.07;
+          const controlX = componentWidth / 2;
+          const controlY = curveTopPoint - backgroundHeight * 0.07;
+          const endX = backgroundWidth;
+          const endY = startY;
+
+          // Map position [-1, 1] to t in [0, 1]
+          const t = (position + 1) / 2;
+
+          // Quadratic Bézier interpolation
+          const x =
+            (1 - t) * (1 - t) * startX +
+            2 * (1 - t) * t * controlX +
+            t * t * endX;
+          const y =
+            (1 - t) * (1 - t) * startY +
+            2 * (1 - t) * t * controlY +
+            t * t * endY;
+
+          // Draw the dot
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, 2 * Math.PI);
+          ctx.fillStyle = "red";
+          ctx.fill();
+        };
+
+        drawDotOnCurve(steeringPointPosition);
+      }
     };
 
     const canvas = canvasRef.current;
@@ -356,6 +391,7 @@ const GT7OriginalTelemetry: React.FC<Props> = ({
     speedUnitText,
     rpmBarColor,
     backgroundOpacity,
+    steeringPointPosition,
   ]);
 
   return (

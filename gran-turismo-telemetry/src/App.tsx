@@ -27,7 +27,8 @@ export default function RacingHUD() {
   const [gear, setGear] = useState(0);
   const [speedKph, setSpeedKph] = useState(0);
   const [speedMph, setSpeedMph] = useState(0);
-  const [, setSteeringAnglePct] = useState(0);
+  const [steeringAnglePct, setSteeringAnglePct] = useState(0);
+  const [steeringPointPosition, setSteeringPointPosition] = useState(0);
   const [displayUnits, setDisplayUnits] = useState("IMPERIAL");
   const [rpm, setRpm] = useState(0);
   const [rpmStageFirst, setRpmStageFirst] = useState(0);
@@ -75,13 +76,17 @@ export default function RacingHUD() {
     setRpmStageBlink(rpmStageBlink);
   }, [data]);
 
-  // Calculate steering dot position
-  // const calculateSteeringDotPosition = () => {
-  //   // Clamp steering angle to [-0.25, 0.25] range
-  //   const clampedSteering = Math.max(-0.25, Math.min(0.25, steeringAnglePct));
-  //   // Reverse the steering logic and convert to percentage for positioning (0% = far left, 100% = far right)
-  //   return ((-clampedSteering + 0.25) / 0.5) * 100;
-  // };
+  useEffect(() => {
+    if (steeringAnglePct > 0.245) {
+      setSteeringPointPosition(0.245 * 4);
+      return;
+    } else if (steeringAnglePct < -0.245) {
+      setSteeringPointPosition(-0.245 * 4);
+      return;
+    }
+
+    setSteeringPointPosition(steeringAnglePct * 4);
+  }, [steeringAnglePct]);
 
   return (
     <GT7OriginalTelemetry
@@ -95,6 +100,7 @@ export default function RacingHUD() {
       speedKph={speedKph}
       speedMph={speedMph}
       backgroundOpacity={backgroundOpacity}
+      steeringPointPosition={steeringPointPosition}
     />
   );
 }
