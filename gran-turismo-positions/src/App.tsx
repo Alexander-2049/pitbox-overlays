@@ -104,8 +104,5 @@ export default function RacingHUD() {
     setDrivers(newDrivers);
   }, [data]);
 
-  // For debug:
-  console.log(drivers);
-
   return <Leaderboard drivers={drivers} />;
 }

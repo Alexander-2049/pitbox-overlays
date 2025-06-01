@@ -31,7 +31,6 @@ interface Props {
 
 const Leaderboard: React.FC<Props> = ({
   drivers,
-  // currentDriverCarId = -1,
   // fontSize = {
   //   position: "16px",
   //   driverName: "14px",
@@ -64,6 +63,7 @@ const Leaderboard: React.FC<Props> = ({
     >
       {sortedDrivers.map((driver) => {
         if (driver.carId) {
+          const isCurrent = driver.carId === driver.spectateCarId;
           return (
             <div
               key={`lb-row-${driver.carId}`}
@@ -72,23 +72,35 @@ const Leaderboard: React.FC<Props> = ({
                 width: "100%",
                 display: "flex",
                 gap: "3px",
+                background: isCurrent ? "rgba(255,255,255,0.9)" : undefined,
+                color: isCurrent ? "#111" : "#fff",
+                fontWeight: isCurrent ? "bold" : "normal",
+                boxShadow: isCurrent
+                  ? "0 2px 8px 0 rgba(0,0,0,0.08)"
+                  : undefined,
+                transition: "background 0.2s,color 0.2s",
               }}
             >
               {/* Driver position number */}
               <div
                 style={{
-                  border: "3px solid rgba(64,64,64,0.5)",
+                  border: isCurrent
+                    ? "3px solid rgba(255,255,255,0.3)"
+                    : "3px solid rgba(64,64,64,0.5)",
                   width: "57px",
                   height: "100%",
                   boxSizing: "border-box",
                   fontWeight: "bold",
+                  background: isCurrent
+                    ? "rgba(255,255,255,0.8)"
+                    : "rgba(0,0,0,0.65)",
+                  color: isCurrent ? "#111" : "#fff",
                 }}
               >
                 <div
                   style={{
                     width: "100%",
                     height: "100%",
-                    background: "rgba(0,0,0,0.65)",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -104,10 +116,13 @@ const Leaderboard: React.FC<Props> = ({
                   alignItems: "center",
                   height: "100%",
                   flexGrow: "1",
-                  background: "rgba(0,0,0,0.38)",
+                  background: isCurrent
+                    ? "rgba(255,255,255,0.9)"
+                    : "rgba(0,0,0,0.38)",
                   boxSizing: "border-box",
                   paddingLeft: "11px",
                   paddingRight: "11px",
+                  color: isCurrent ? "#111" : "#fff",
                 }}
               >
                 {/* Driver name */}
@@ -149,10 +164,13 @@ const Leaderboard: React.FC<Props> = ({
                         style={{
                           width: "20px",
                           height: "22px",
-                          background: "rgba(152,152,152,0.4)",
+                          background: isCurrent
+                            ? "rgba(200,200,200,0.4)"
+                            : "rgba(152,152,152,0.4)",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          color: isCurrent ? "#111" : "#fff",
                         }}
                       >
                         {driver.iRacingLicString}
@@ -161,7 +179,9 @@ const Leaderboard: React.FC<Props> = ({
 
                     {/* License level */}
                     {driver.iRacingLicSubLevel !== undefined && (
-                      <div>{driver.iRacingLicSubLevel.toFixed(2)}</div>
+                      <div style={{ color: isCurrent ? "#111" : "#fff" }}>
+                        {driver.iRacingLicSubLevel.toFixed(2)}
+                      </div>
                     )}
                   </div>
 
@@ -177,7 +197,7 @@ const Leaderboard: React.FC<Props> = ({
                   >
                     <div
                       style={{
-                        color: "#fff",
+                        color: isCurrent ? "#111" : "#fff",
                         minWidth: "40px",
                         textAlign: "right",
                       }}
@@ -193,7 +213,9 @@ const Leaderboard: React.FC<Props> = ({
                               ? "#7ADD9B"
                               : driver.iRatingChange < 0
                                 ? "#DD7A7A"
-                                : "#fff",
+                                : isCurrent
+                                  ? "#111"
+                                  : "#fff",
                           minWidth: "32px",
                           textAlign: "right",
                         }}
