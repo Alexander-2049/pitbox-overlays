@@ -54,7 +54,9 @@ export default function RacingHUD() {
             | boolean
           )[];
           structured[field] = values;
-          maxLength = Math.max(maxLength, values.length);
+          if (Array.isArray(values)) {
+            maxLength = Math.max(maxLength, values.length);
+          }
         }
       }
     }
