@@ -11,5 +11,5 @@ export interface Driver {
   carClassShortName?: string;
   iRacingLicString?: string;
   iRacingLicSubLevel?: number;
-  spectateCarId?: number;
+  isSelected?: boolean;
 }

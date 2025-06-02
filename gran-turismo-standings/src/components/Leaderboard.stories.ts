@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import Leaderboard, { Driver } from "./Leaderboard";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import Leaderboard from "./Leaderboard";
+import { Driver } from "../types/Driver";
 
 const exampleDrivers: Driver[] = [
   {
@@ -14,7 +15,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "A",
     iRacingLicSubLevel: 3,
-    spectateCarId: 1,
+    isSelected: false,
   },
   {
     carId: 2,
@@ -28,7 +29,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "B",
     iRacingLicSubLevel: 2,
-    spectateCarId: 2,
+    isSelected: false,
   },
   {
     carId: 3,
@@ -42,7 +43,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "C",
     iRacingLicSubLevel: 1,
-    spectateCarId: 3,
+    isSelected: false,
   },
   {
     carId: 4,
@@ -56,7 +57,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "D",
     iRacingLicSubLevel: 0,
-    spectateCarId: 4,
+    isSelected: false,
   },
   {
     carId: 5,
@@ -70,7 +71,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "R",
     iRacingLicSubLevel: 4,
-    spectateCarId: 5,
+    isSelected: true,
   },
   {
     carId: 6,
@@ -84,7 +85,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "A",
     iRacingLicSubLevel: 2,
-    spectateCarId: 6,
+    isSelected: false,
   },
   {
     carId: 12,
@@ -98,7 +99,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "B",
     iRacingLicSubLevel: 3,
-    spectateCarId: 12,
+    isSelected: false,
   },
   {
     carId: 8,
@@ -112,7 +113,7 @@ const exampleDrivers: Driver[] = [
     carClassShortName: "GT3",
     iRacingLicString: "C",
     iRacingLicSubLevel: 1,
-    spectateCarId: 8,
+    isSelected: false,
   },
 ];
 

@@ -1,20 +1,5 @@
 import type React from "react";
-
-export interface Driver {
-  carId?: number;
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
-  position?: number;
-  classPosition?: number;
-  isCarOnTrack?: boolean;
-  iRating?: number;
-  iRatingChange?: number;
-  carClassShortName?: string;
-  iRacingLicString?: string;
-  iRacingLicSubLevel?: number;
-  spectateCarId?: number;
-}
+import { Driver } from "../types/Driver";
 
 interface Props {
   drivers: Driver[];
@@ -63,7 +48,6 @@ const Leaderboard: React.FC<Props> = ({
     >
       {sortedDrivers.map((driver) => {
         if (driver.carId) {
-          const isCurrent = driver.carId === driver.spectateCarId;
           return (
             <div
               key={`lb-row-${driver.carId}`}
@@ -72,10 +56,9 @@ const Leaderboard: React.FC<Props> = ({
                 width: "100%",
                 display: "flex",
                 gap: "3px",
-                background: isCurrent ? "rgba(255,255,255,0.9)" : undefined,
-                color: isCurrent ? "#111" : "#fff",
-                fontWeight: isCurrent ? "bold" : "normal",
-                boxShadow: isCurrent
+                color: driver.isSelected ? "#111" : "#fff",
+                fontWeight: driver.isSelected ? "bold" : "normal",
+                boxShadow: driver.isSelected
                   ? "0 2px 8px 0 rgba(0,0,0,0.08)"
                   : undefined,
                 transition: "background 0.2s,color 0.2s",
@@ -84,17 +67,17 @@ const Leaderboard: React.FC<Props> = ({
               {/* Driver position number */}
               <div
                 style={{
-                  border: isCurrent
+                  border: driver.isSelected
                     ? "3px solid rgba(255,255,255,0.3)"
                     : "3px solid rgba(64,64,64,0.5)",
                   width: "57px",
                   height: "100%",
                   boxSizing: "border-box",
                   fontWeight: "bold",
-                  background: isCurrent
-                    ? "rgba(255,255,255,0.8)"
+                  background: driver.isSelected
+                    ? "rgba(255,255,255,0.65)"
                     : "rgba(0,0,0,0.65)",
-                  color: isCurrent ? "#111" : "#fff",
+                  color: driver.isSelected ? "#111" : "#fff",
                   flexShrink: "0",
                 }}
               >
@@ -117,13 +100,13 @@ const Leaderboard: React.FC<Props> = ({
                   alignItems: "center",
                   height: "100%",
                   flexGrow: "1",
-                  background: isCurrent
-                    ? "rgba(255,255,255,0.9)"
+                  background: driver.isSelected
+                    ? "rgba(255,255,255,0.65)"
                     : "rgba(0,0,0,0.38)",
                   boxSizing: "border-box",
                   paddingLeft: "11px",
                   paddingRight: "11px",
-                  color: isCurrent ? "#111" : "#fff",
+                  color: driver.isSelected ? "#111" : "#fff",
                   minWidth: "0", // Allow shrinking
                 }}
               >
@@ -180,13 +163,13 @@ const Leaderboard: React.FC<Props> = ({
                         style={{
                           width: "20px",
                           height: "22px",
-                          background: isCurrent
+                          background: driver.isSelected
                             ? "rgba(200,200,200,0.4)"
                             : "rgba(152,152,152,0.4)",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          color: isCurrent ? "#111" : "#fff",
+                          color: driver.isSelected ? "#111" : "#fff",
                         }}
                       >
                         {driver.iRacingLicString}
@@ -195,7 +178,9 @@ const Leaderboard: React.FC<Props> = ({
 
                     {/* License level */}
                     {driver.iRacingLicSubLevel !== undefined && (
-                      <div style={{ color: isCurrent ? "#111" : "#fff" }}>
+                      <div
+                        style={{ color: driver.isSelected ? "#111" : "#fff" }}
+                      >
                         {driver.iRacingLicSubLevel.toFixed(2)}
                       </div>
                     )}
@@ -213,7 +198,7 @@ const Leaderboard: React.FC<Props> = ({
                   >
                     <div
                       style={{
-                        color: isCurrent ? "#111" : "#fff",
+                        color: driver.isSelected ? "#111" : "#fff",
                         minWidth: "40px",
                         textAlign: "right",
                       }}
@@ -229,7 +214,7 @@ const Leaderboard: React.FC<Props> = ({
                               ? "#7ADD9B"
                               : driver.iRatingChange < 0
                                 ? "#DD7A7A"
-                                : isCurrent
+                                : driver.isSelected
                                   ? "#111"
                                   : "#fff",
                           minWidth: "32px",

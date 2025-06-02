@@ -94,9 +94,7 @@ export default function RacingHUD() {
         }
       });
 
-      if (spectateCarId !== undefined) {
-        driver.spectateCarId = spectateCarId;
-      }
+      driver.isSelected = spectateCarId === driver.carId;
 
       return driver;
     });
