@@ -30,7 +30,7 @@ export default function RacingHUD() {
     []
   );
 
-  const { data } = useWebSocket("ws://localhost:49791", memoizedKeys) as {
+  const { data } = useWebSocket(memoizedKeys) as {
     data?: WSSData;
   };
 

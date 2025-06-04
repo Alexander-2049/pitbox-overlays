@@ -1,49 +1,77 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+/// <reference types="node" />
 
 type WebSocketData = Record<string, unknown>;
 
-const useWebSocket = (url: string, params: string[]) => {
+const useWebSocket = (params: string[]) => {
+  const isPreview = /\bpreview(\b|=true)/.test(window.location.search);
+  const url = isPreview ? "ws://localhost:49794" : "ws://localhost:49791";
+
   const [data, setData] = useState<WebSocketData>(
-    Object.fromEntries(params.map((param) => [param, null])),
+    Object.fromEntries(params.map((param) => [param, null]))
   );
   const [error, setError] = useState<string | null>(null);
 
+  const socketRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
-    const queryParams = `?q=${params.join(",")}`;
-    const socket = new WebSocket(`${url}${queryParams}`);
+    let isUnmounted = false;
 
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (
-          message.success &&
-          typeof message.data === "object" &&
-          message.data !== null
-        ) {
-          const updatedData: WebSocketData = {};
-          message.data.forEach(([key, value]: [string, unknown]) => {
-            if (params.includes(key)) {
-              updatedData[key] = value;
-            }
-          });
-          setData((prevData) => ({ ...prevData, ...updatedData }));
-        } else if (message.errorMessage) {
-          setError(message.errorMessage);
+    const connect = () => {
+      const queryParams = `?q=${params.join(",")}`;
+      const ws = new WebSocket(`${url}${queryParams}`);
+      socketRef.current = ws;
+
+      ws.onopen = () => {
+        if (!isUnmounted) setError(null);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (
+            message.success &&
+            typeof message.data === "object" &&
+            message.data !== null
+          ) {
+            const updatedData: WebSocketData = {};
+            message.data.forEach(([key, value]: [string, unknown]) => {
+              if (params.includes(key)) {
+                updatedData[key] = value;
+              }
+            });
+            setData((prevData) => ({ ...prevData, ...updatedData }));
+          } else if (message.errorMessage) {
+            setError(message.errorMessage);
+          }
+        } catch {
+          setError("Failed to parse WebSocket message");
         }
-      } catch (err) {
-        console.error(err);
-        setError("Failed to parse WebSocket message");
-      }
+      };
+
+      ws.onerror = () => {
+        if (!isUnmounted) setError("WebSocket error occurred");
+      };
+
+      ws.onclose = () => {
+        if (!isUnmounted) {
+          reconnectTimeoutRef.current = setTimeout(connect, 5000);
+        }
+      };
     };
 
-    socket.onerror = () => {
-      setError("WebSocket error occurred");
-    };
+    connect();
 
     return () => {
-      socket.close();
+      isUnmounted = true;
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      socketRef.current?.close();
     };
-  }, [url, params]); // Use serializedParams here
+  }, [url, params]);
 
   return { data, error };
 };
