@@ -2,8 +2,8 @@
   "author": "Sim Racing Universe",
   "name": "Gran Turismo 7 Positions",
   "type": "telemetry",
-  "defaultHeight": 376,
-  "defaultWidth": 324,
+  "defaultHeight": 600,
+  "defaultWidth": 450,
   "settings": [
     {
       "id": "backgroundOpacity",
