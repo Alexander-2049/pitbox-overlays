@@ -1,0 +1,28 @@
+.wrapper {
+  background-color: rgba(0,0,0,0.8);
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.verticalLine {
+  width: 2px;
+  height: 80%;
+  background-color: rgb(109, 109, 109);
+  margin-right: 16px;
+}
+
+.sessionType {
+  padding: 0 12px 0 16px;
+  font-size: 18px;
+}
+
+.currentSessionTime {
+  font-size: 20px;
+}
