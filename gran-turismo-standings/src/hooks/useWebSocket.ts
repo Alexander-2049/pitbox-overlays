@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from "react";
 type WebSocketData = Record<string, unknown>;
 
 const useWebSocket = (params: string[]) => {
-  const isPreview = /\bpreview(\b|=true)/.test(window.location.search);
-  const url = isPreview ? "ws://localhost:49794" : "ws://localhost:49791";
+  const url = "ws://localhost:49791";
 
   const [data, setData] = useState<WebSocketData>(
     Object.fromEntries(params.map((param) => [param, null]))
@@ -20,7 +19,8 @@ const useWebSocket = (params: string[]) => {
     let isUnmounted = false;
 
     const connect = () => {
-      const queryParams = `?q=${params.join(",")}`;
+      const isPreview = /\bpreview(\b|=true)/.test(window.location.search);
+      const queryParams = `?preview=${isPreview ? "true" : "false"}&q=${params.join(",")}`;
       const ws = new WebSocket(`${url}${queryParams}`);
       socketRef.current = ws;
 
