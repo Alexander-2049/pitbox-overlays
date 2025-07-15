@@ -1,0 +1,53 @@
+.groupContainer {
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.4); /* Default dark theme background */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.groupContainer.lightTheme {
+  background-color: rgba(255, 255, 255, 0.9); /* Light theme background */
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #fff; /* Default dark theme header color */
+  min-height: 20px; /* Ensure consistent header height */
+}
+
+.groupHeader.lightTheme {
+  color: #333; /* Light theme header color */
+}
+
+.groupHeader::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: var(--group-color); /* Dynamic color dot */
+  flex-shrink: 0;
+}
+
+.groupHeader span {
+  flex-grow: 1;
+}
+
+.groupHeader .driverCount {
+  font-size: 0.8em;
+  color: #ccc; /* Default dark theme driver count color */
+  flex-shrink: 0;
+}
+
+.groupHeader .driverCount.lightTheme {
+  color: #666; /* Light theme driver count color */
+}
+
+.separator {
+  height: 1px;
+  background-color: var(--group-separator-color, rgba(109, 109, 109, 0.5)); /* Default dark theme separator */
+  margin: 8px 0;
+}

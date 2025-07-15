@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 type WebSocketData = Record<string, unknown>;
 
 const useWebSocket = (params: string[]) => {
-  const url = "ws://localhost:49791";
+  const url = "ws://localhost:42049";
 
   const [data, setData] = useState<WebSocketData>(
     Object.fromEntries(params.map((param) => [param, null]))

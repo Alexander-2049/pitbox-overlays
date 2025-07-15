@@ -1,35 +1,38 @@
-import { SessionRacing } from "../../types/Session";
-import styles from "./header.module.css";
+import type { SessionRacing } from "../../types/Session"
+import { formatCurrentTime } from "../../utils/formatters"
+import styles from "./header.module.css"
+import { Thermometer } from "lucide-react"
 
 interface Props {
-  session: SessionRacing;
+  session: SessionRacing
+  textColor?: string
+  fontSize?: string
+  isLightTheme?: boolean
 }
 
-function formatCurrentTime(timeInSeconds: number) {
-  const hours = Math.floor(timeInSeconds / 3600);
-  const minutes = Math.floor((timeInSeconds % 3600) / 60);
-  const seconds = Math.floor(timeInSeconds % 60);
+export const Header = ({ session, textColor, fontSize, isLightTheme }: Props) => {
+  const themeClass = isLightTheme ? styles.lightTheme : ""
 
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-}
-
-export const Header = (props: Props) => {
-  console.log(props);
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.sessionType}>
-        {props.session.sessionType ? props.session.sessionType[0] : "R"}
+    <div className={`${styles.wrapper} ${themeClass}`} style={{ color: textColor, fontSize: fontSize }}>
+      <div className={styles.sessionInfo}>
+        {session.sessionType && <div className={styles.sessionType}>{session.sessionType[0]}</div>}
+        {session.sessionType && <div className={`${styles.verticalLine} ${themeClass}`} />}
+        {session.sessionCurrentTime !== undefined && (
+          <div className={styles.currentTime}>
+            {formatCurrentTime(session.sessionCurrentTime)}
+            {session.sessionDuration !== undefined && ` / ${formatCurrentTime(session.sessionDuration)}`}
+          </div>
+        )}
       </div>
-      {props.session.sessionType && <div className={styles.verticalLine} />}
-      {props.session.sessionCurrentTime && (
-        <div className={styles.currentSessionTime}>
-          {formatCurrentTime(props.session.sessionCurrentTime)}
-          {props.session.sessionDuration &&
-            ` / ${formatCurrentTime(props.session.sessionDuration)}`}
+      {session.driversRegistered !== undefined && (
+        <div className={`${styles.driversRegistered} ${themeClass}`}>({session.driversRegistered} drivers)</div>
+      )}
+      {session.temperature !== undefined && (
+        <div className={styles.temperature}>
+          {session.temperature} <Thermometer size={16} />
         </div>
       )}
     </div>
-  );
-};
+  )
+}

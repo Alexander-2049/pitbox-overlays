@@ -1,28 +1,59 @@
 .wrapper {
-  background-color: rgba(0,0,0,0.8);
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
-  color: #fff;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 20px;
   font-weight: 600;
+  padding: 0 16px;
+  gap: 12px;
+  background-color: rgba(0, 0, 0, 0.8); /* Default dark theme background */
+  flex-shrink: 0; /* Prevent shrinking */
+  color: #fff; /* Default dark theme text color */
+}
+
+.wrapper.lightTheme {
+  background-color: rgba(255, 255, 255, 0.9); /* Light theme background */
+  color: #333; /* Light theme text color */
+}
+
+.sessionInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sessionType {
+  font-size: 18px;
 }
 
 .verticalLine {
   width: 2px;
   height: 80%;
   background-color: rgb(109, 109, 109);
-  margin-right: 16px;
 }
 
-.sessionType {
-  padding: 0 12px 0 16px;
-  font-size: 18px;
+.verticalLine.lightTheme {
+  background-color: rgb(180, 180, 180);
 }
 
-.currentSessionTime {
+.currentTime {
   font-size: 20px;
+}
+
+.temperature {
+  margin-left: auto; /* Pushes temperature to the right */
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 20px;
+}
+
+.driversRegistered {
+  font-size: 16px;
+  color: #ccc;
+}
+
+.driversRegistered.lightTheme {
+  color: #666;
 }

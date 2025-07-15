@@ -1,17 +1,18 @@
 export interface Driver {
-  carIdx: number;
-  firstName: string;
-  lastName: string;
-  middleName?: string;
-  position: number;
-  classPosition: number;
-  isCarOnTrack: boolean;
-  iRating?: number;
-  iRatingChange?: number;
-  carClassId?: number;
-  carClassShortName?: string;
-  iRacingLicString?: string;
-  iRacingLicSubLevel?: number;
-  isSelected?: boolean;
-  fastestLap?: number;
+  carIdx: number
+  carNumber: number // Added carNumber
+  firstName: string
+  lastName: string
+  position: number
+  classPosition: number
+  isCarOnTrack: boolean
+  middleName?: string // Optional
+  iRating?: number // Optional
+  iRatingChange?: number // Optional
+  carClassId?: number // Optional
+  carClassShortName?: string // Optional
+  iRacingLicString?: string // Optional
+  iRacingLicSubLevel?: number // Optional
+  isSelected?: boolean // Optional
+  fastestLap?: number // Optional
 }

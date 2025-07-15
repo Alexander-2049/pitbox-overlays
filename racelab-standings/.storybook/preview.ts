@@ -18,6 +18,7 @@ const preview: Preview = {
         { name: "White", value: "#fff" },
       ],
     },
+    layout: "fullscreen",
   },
 };
 

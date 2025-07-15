@@ -1,0 +1,54 @@
+.driverRow {
+  display: grid;
+  grid-template-columns: 40px 60px 1fr 60px 100px; /* Adjust column widths as needed */
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Light separator for dark theme */
+  transition: background-color 0.2s ease-in-out;
+  min-height: 35px; /* Ensure consistent row height */
+}
+
+.driverRow.lightTheme {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Light separator for light theme */
+}
+
+.driverRow:last-child {
+  border-bottom: none;
+}
+
+.driverRow.selected {
+  background-color: var(--selected-highlight-color, #3a4a6a); /* Default highlight */
+}
+
+.position {
+  text-align: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 8px;
+  flex-grow: 1;
+}
+
+.iRating {
+  text-align: right;
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+
+.fastestLap {
+  text-align: right;
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+
+.fastestLap.highlight {
+  background-color: var(--fastest-lap-highlight-color, #9b59b6); /* Purple highlight */
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 4px;
+}

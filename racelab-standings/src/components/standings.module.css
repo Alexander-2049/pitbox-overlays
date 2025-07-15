@@ -1,5 +1,22 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* No scrollbar */
+  background-color: rgba(34, 35, 36, 0.7); /* Default dark theme background */
+  font-family: "Electrolize", sans-serif;
+}
+
+.wrapper.lightTheme {
+  background-color: rgba(240, 240, 240, 0.8); /* Light theme background */
+}
+
+.driversSection {
+  flex-grow: 1; /* Allow this section to take available space */
+  overflow: hidden; /* No scrollbar */
+  padding: 10px; /* Padding around the groups */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between groups */
 }
