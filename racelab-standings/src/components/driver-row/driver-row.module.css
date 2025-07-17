@@ -1,11 +1,11 @@
 .driverRow {
   display: grid;
-  grid-template-columns: 40px 60px 1fr 60px 100px; /* Adjust column widths as needed */
+  grid-template-columns: 40px 40px 1fr 60px 100px; /* Adjust column widths as needed */
   align-items: center;
-  padding: 6px 0;
+  padding: 3px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Light separator for dark theme */
   transition: background-color 0.2s ease-in-out;
-  min-height: 35px; /* Ensure consistent row height */
+  min-height: 15px; /* Ensure consistent row height */
 }
 
 .driverRow.lightTheme {

@@ -9,10 +9,10 @@ import { Group } from "./drivers/group";
 // Precise height constants based on CSS
 const GROUP_HEADER_HEIGHT = 28; // px, 20px min-height + 8px margin-bottom from group.module.css
 const GROUP_SEPARATOR_HEIGHT = 17; // px, 1px height + 8px margin top/bottom from group.module.css
-const DRIVER_ROW_HEIGHT = 47; // px, fixed height including paddings/margins
+const DRIVER_ROW_HEIGHT = 27; // px, fixed height including paddings/margins
 const GROUP_PADDING_VERTICAL = 20; // px, 10px top + 10px bottom from group.module.css
 const DRIVERS_SECTION_PADDING_VERTICAL = 20; // px, 10px top + 10px bottom from standings.module.css
-const GROUP_GAP = 10; // px, from standings.module.css for driversSection gap
+const GROUP_GAP = 5; // px, from standings.module.css for driversSection gap
 
 const calculateGroupRenderHeight = (numDrivers: number) => {
   if (numDrivers === 0) return 0;
@@ -30,13 +30,13 @@ const Standings = ({
   backgroundColor,
   backgroundOpacity = 0.7,
   textColor,
-  headerFontSize = "20px",
-  groupHeaderFontSize = "18px",
-  driverNameFontSize = "16px",
+  headerFontSize = "16px",
+  groupHeaderFontSize = "16px",
+  driverNameFontSize = "14px",
   positionFontSize = "16px",
-  carNumberFontSize = "14px",
-  iRatingFontSize = "14px",
-  fastestLapFontSize = "14px",
+  carNumberFontSize = "13px",
+  iRatingFontSize = "13px",
+  fastestLapFontSize = "13px",
   showTopNCount = 3,
   selectedDriverHighlightColor,
   fastestLapHighlightColor,

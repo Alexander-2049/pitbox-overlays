@@ -18,5 +18,5 @@
   padding: 10px; /* Padding around the groups */
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Space between groups */
+  gap: 5px; /* Space between groups */
 }
