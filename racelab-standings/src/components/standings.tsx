@@ -369,7 +369,6 @@ const Standings = ({
             carNumberFontSize={carNumberFontSize}
             iRatingFontSize={iRatingFontSize}
             fastestLapFontSize={fastestLapFontSize}
-            showTopNCount={showTopNCount}
             selectedDriverHighlightColor={themeColors.selectedHighlight}
             fastestLapHighlightColor={themeColors.fastestHighlight}
             groupSeparatorColor={themeColors.separatorColor}
