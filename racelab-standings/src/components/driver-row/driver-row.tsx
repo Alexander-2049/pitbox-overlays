@@ -1,20 +1,20 @@
-import type React from "react"
-import type { Driver } from "../../types/Driver"
-import { formatFastestLap } from "../../utils/formatters"
-import { CarNumber } from "../car-number/car-number"
-import styles from "./driver-row.module.css"
+import type React from "react";
+import type { Driver } from "../../types/Driver";
+import { formatFastestLap } from "../../utils/formatters";
+import { CarNumber } from "../car-number/car-number";
+import styles from "./driver-row.module.css";
 
 interface Props {
-  driver: Driver
-  isFastestInGroup?: boolean
-  driverNameFontSize?: string
-  positionFontSize?: string
-  carNumberFontSize?: string
-  iRatingFontSize?: string
-  fastestLapFontSize?: string
-  selectedDriverHighlightColor?: string
-  fastestLapHighlightColor?: string
-  isLightTheme?: boolean
+  driver: Driver;
+  isFastestInGroup?: boolean;
+  driverNameFontSize?: string;
+  positionFontSize?: string;
+  carNumberFontSize?: string;
+  iRatingFontSize?: string;
+  fastestLapFontSize?: string;
+  selectedDriverHighlightColor?: string;
+  fastestLapHighlightColor?: string;
+  isLightTheme?: boolean;
 }
 
 export const DriverRow = ({
@@ -29,8 +29,8 @@ export const DriverRow = ({
   fastestLapHighlightColor,
   isLightTheme,
 }: Props) => {
-  const fullName = `${driver.firstName} ${driver.middleName ? driver.middleName + " " : ""}${driver.lastName}`
-  const themeClass = isLightTheme ? styles.lightTheme : ""
+  const fullName = `${driver.firstName} ${driver.middleName ? driver.middleName + " " : ""}${driver.lastName}`;
+  const themeClass = isLightTheme ? styles.lightTheme : "";
 
   return (
     <div
@@ -44,7 +44,11 @@ export const DriverRow = ({
       <div className={styles.position} style={{ fontSize: positionFontSize }}>
         {driver.classPosition}
       </div>
-      <CarNumber carNumber={driver.carNumber} carClassId={driver.carClassId} fontSize={carNumberFontSize} />
+      <CarNumber
+        carNumber={driver.carNumber}
+        carClassId={driver.carClassId}
+        fontSize={carNumberFontSize}
+      />
       <div className={styles.name} style={{ fontSize: driverNameFontSize }}>
         {fullName}
       </div>
@@ -67,5 +71,5 @@ export const DriverRow = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};

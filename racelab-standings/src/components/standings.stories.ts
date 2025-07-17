@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react-vite"
-import type { Driver } from "../types/Driver"
-import Standings from "./standings"
-import type { SessionRacing } from "../types/Session"
-import "../index.css" // Import global CSS for fonts
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { Driver } from "../types/Driver";
+import Standings from "./standings";
+import type { SessionRacing } from "../types/Session";
+import "../index.css";
 
 if (typeof window !== "undefined") {
-  const head = document.head
+  const head = document.head;
   const links = [
     {
       rel: "preconnect",
@@ -20,17 +20,17 @@ if (typeof window !== "undefined") {
       rel: "stylesheet",
       href: "https://fonts.googleapis.com/css2?family=Electrolize&family=Figtree:ital,wght@0,300..900;1,300..900&display=swap",
     },
-  ]
+  ];
 
   links.forEach((attrs) => {
     if (!head.querySelector(`link[href="${attrs.href}"]`)) {
-      const link = document.createElement("link")
+      const link = document.createElement("link");
       Object.entries(attrs).forEach(([key, value]) => {
-        if (value !== undefined) link.setAttribute(key, value)
-      })
-      head.appendChild(link)
+        if (value !== undefined) link.setAttribute(key, value);
+      });
+      head.appendChild(link);
     }
-  })
+  });
 }
 const exampleDrivers: Driver[] = [
   // GT3 class
@@ -345,7 +345,7 @@ const exampleDrivers: Driver[] = [
     isSelected: false,
     fastestLap: 92.5, // 01:32.500
   },
-]
+];
 
 const sessionExample: SessionRacing = {
   sessionCurrentTime: 124, // 00:02:04
@@ -353,7 +353,7 @@ const sessionExample: SessionRacing = {
   sessionType: "RACE",
   temperature: 36, // Added temperature
   driversRegistered: 20, // Added driversRegistered
-}
+};
 
 const meta: Meta<typeof Standings> = {
   title: "Components/Standings",
@@ -378,18 +378,18 @@ const meta: Meta<typeof Standings> = {
     groupSeparatorColor: { control: "color" },
     isLightTheme: { control: "boolean" }, // New argType
   },
-}
+};
 
-export default meta
+export default meta;
 
-type Story = StoryObj<typeof Standings>
+type Story = StoryObj<typeof Standings>;
 
 export const Default: Story = {
   args: {
     drivers: exampleDrivers,
     session: sessionExample,
   },
-}
+};
 
 export const CustomStyling: Story = {
   args: {
@@ -406,7 +406,7 @@ export const CustomStyling: Story = {
     selectedDriverHighlightColor: "#00796b",
     fastestLapHighlightColor: "#ff5722",
   },
-}
+};
 
 export const Top5AndSelected: Story = {
   args: {
@@ -414,7 +414,7 @@ export const Top5AndSelected: Story = {
     session: sessionExample,
     showTopNCount: 5,
   },
-}
+};
 
 export const NoSelectedDriver: Story = {
   args: {
@@ -422,15 +422,17 @@ export const NoSelectedDriver: Story = {
     session: sessionExample,
     showTopNCount: 3,
   },
-}
+};
 
 export const FewerDrivers: Story = {
   args: {
-    drivers: exampleDrivers.slice(0, 5).map((d) => ({ ...d, isSelected: false })),
+    drivers: exampleDrivers
+      .slice(0, 5)
+      .map((d) => ({ ...d, isSelected: false })),
     session: sessionExample,
     showTopNCount: 3,
   },
-}
+};
 
 export const LightTheme: Story = {
   args: {
@@ -443,4 +445,4 @@ export const LightTheme: Story = {
     fastestLapHighlightColor: "#ff8a65",
     groupSeparatorColor: "rgba(180, 180, 180, 0.5)",
   },
-}
+};

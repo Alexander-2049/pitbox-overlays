@@ -1,20 +1,37 @@
 {
-  "author": "Sim Racing Universe",
-  "name": "Gran Turismo 7 Positions",
-  "type": "telemetry",
-  "defaultHeight": 600,
-  "defaultWidth": 450,
-  "settings": [
-    {
-      "id": "backgroundOpacity",
-      "type": "slider",
-      "name": "Background Opacity",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "percentage",
-      "group": "Visuals",
-      "defaultValue": 40
-    }
+  "title": "PaceTab: Standings",
+  "description": "",
+  "tags": [
+    "Standings",
+    "Timing"
+  ],
+  "dimentions": {
+    "defaultWidth": 300,
+    "defaultHeight": 400,
+    "minWidth": 200,
+    "minHeight": 300,
+    "maxWidth": 800,
+    "maxHeight": 800
+  },
+  "settings": [],
+  "requiredFields": [
+    "drivers[].firstName",
+    "drivers[].classPosition"
+  ],
+  "optionalFields": [
+    "realtime.spectateCarId",
+    "drivers[].middleName",
+    "drivers[].lastName",
+    "drivers[].carId",
+    "drivers[].isCarOnTrack",
+    "drivers[].iRating",
+    "drivers[].iRatingChange",
+    "drivers[].carClassShortName",
+    "drivers[].iRacingLicString",
+    "drivers[].iRacingLicSubLevel",
+    "session.wetnessLevel",
+    "session.trackTempC",
+    "session.airTempC",
+    "session.wetnessString"
   ]
 }
