@@ -1,5 +1,5 @@
 .groupContainer {
-  padding: 10px;
+  padding: var(--group-container-padding); /* Controlled by prop */
   border-radius: 8px;
   background-color: rgba(0, 0, 0, 0.4); /* Default dark theme background */
   flex-shrink: 0; /* Prevent shrinking */
@@ -12,10 +12,10 @@
 .groupHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--group-header-margin-bottom); /* Controlled by prop */
   font-weight: bold;
   color: #fff; /* Default dark theme header color */
-  min-height: 20px; /* Ensure consistent header height */
+  min-height: var(--group-header-min-height); /* Controlled by prop */
 }
 
 .groupHeader.lightTheme {
@@ -37,9 +37,9 @@
 }
 
 .groupHeader .driverCount {
-  font-size: 0.8em;
   color: #ccc; /* Default dark theme driver count color */
   flex-shrink: 0;
+  margin-left: 8px;
 }
 
 .groupHeader .driverCount.lightTheme {
@@ -47,7 +47,7 @@
 }
 
 .separator {
-  height: 1px;
+  height: var(--group-separator-height); /* Controlled by prop */
   background-color: var(--group-separator-color, rgba(109, 109, 109, 0.5)); /* Default dark theme separator */
-  margin: 8px 0;
+  margin: var(--group-separator-margin-vertical) 0; /* Controlled by prop */
 }

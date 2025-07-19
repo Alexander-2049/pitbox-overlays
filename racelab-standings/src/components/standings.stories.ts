@@ -365,18 +365,60 @@ const meta: Meta<typeof Standings> = {
     },
     backgroundColor: { control: "color" },
     textColor: { control: "color" },
-    headerFontSize: { control: "text" },
-    groupHeaderFontSize: { control: "text" },
-    driverNameFontSize: { control: "text" },
-    positionFontSize: { control: "text" },
-    carNumberFontSize: { control: "text" },
-    iRatingFontSize: { control: "text" },
-    fastestLapFontSize: { control: "text" },
+    headerFontSize: { control: { type: "range", min: 8, max: 30, step: 1 } },
+    groupHeaderFontSize: {
+      control: { type: "range", min: 8, max: 30, step: 1 },
+    },
+    driverNameFontSize: {
+      control: { type: "range", min: 8, max: 30, step: 1 },
+    },
+    positionFontSize: {
+      control: { type: "range", min: 8, max: 30, step: 1 },
+    },
+    carNumberFontSize: {
+      control: { type: "range", min: 8, max: 30, step: 1 },
+    },
+    iRatingFontSize: {
+      control: { type: "range", min: 8, max: 30, step: 1 },
+    },
+    fastestLapFontSize: {
+      control: { type: "range", min: 8, max: 30, step: 1 },
+    },
     showTopNCount: { control: { type: "range", min: 1, max: 10, step: 1 } },
     selectedDriverHighlightColor: { control: "color" },
     fastestLapHighlightColor: { control: "color" },
     groupSeparatorColor: { control: "color" },
-    isLightTheme: { control: "boolean" }, // New argType
+    isLightTheme: { control: "boolean" },
+    // New size props argTypes
+    headerHeightPx: { control: { type: "range", min: 20, max: 80, step: 1 } },
+    groupHeaderMinHeightPx: {
+      control: { type: "range", min: 10, max: 40, step: 1 },
+    },
+    groupHeaderMarginBottomPx: {
+      control: { type: "range", min: 0, max: 20, step: 1 },
+    },
+    groupSeparatorHeightPx: {
+      control: { type: "range", min: 1, max: 10, step: 1 },
+    },
+    groupSeparatorMarginVerticalPx: {
+      control: { type: "range", min: 0, max: 10, step: 1 },
+    },
+    driverRowMinHeightPx: {
+      control: { type: "range", min: 15, max: 60, step: 1 },
+    },
+    driverRowPaddingVerticalPx: {
+      control: { type: "range", min: 0, max: 10, step: 1 },
+    },
+    driverRowBorderBottomPx: {
+      control: { type: "range", min: 0, max: 5, step: 1 },
+    },
+    groupContainerPaddingPx: {
+      control: { type: "range", min: 0, max: 20, step: 1 },
+    },
+    driversSectionPaddingPx: {
+      control: { type: "range", min: 0, max: 30, step: 1 },
+    },
+    groupGapPx: { control: { type: "range", min: 0, max: 20, step: 1 } },
   },
 };
 
@@ -388,6 +430,7 @@ export const Default: Story = {
   args: {
     drivers: exampleDrivers,
     session: sessionExample,
+    // Uses new default values for sizes
   },
 };
 
@@ -397,12 +440,12 @@ export const CustomStyling: Story = {
     session: sessionExample,
     backgroundColor: "rgba(0, 50, 70, 0.8)",
     textColor: "#e0f7fa",
-    headerFontSize: "22px",
-    driverNameFontSize: "17px",
-    positionFontSize: "17px",
-    carNumberFontSize: "15px",
-    iRatingFontSize: "15px",
-    fastestLapFontSize: "15px",
+    headerFontSize: 22,
+    driverNameFontSize: 17,
+    positionFontSize: 17,
+    carNumberFontSize: 15,
+    iRatingFontSize: 15,
+    fastestLapFontSize: 15,
     selectedDriverHighlightColor: "#00796b",
     fastestLapHighlightColor: "#ff5722",
   },
@@ -444,5 +487,108 @@ export const LightTheme: Story = {
     selectedDriverHighlightColor: "#e0e0e0",
     fastestLapHighlightColor: "#ff8a65",
     groupSeparatorColor: "rgba(180, 180, 180, 0.5)",
+  },
+};
+
+export const FiveClassesVariant: Story = {
+  args: {
+    drivers: [
+      // Class: GT3 (6 drivers)
+      ...exampleDrivers.filter((d) => d.carClassShortName === "GT3"),
+
+      // Class: GT4 (10 drivers)
+      ...exampleDrivers.filter((d) => d.carClassShortName === "GT4"),
+
+      // Class: LMP (6 drivers)
+      ...exampleDrivers.filter((d) => d.carClassShortName === "LMP"),
+
+      // Class: TCR (8 drivers)
+      ...Array.from({ length: 8 }, (_, i) => ({
+        carIdx: 100 + i,
+        carNumber: 100 + i,
+        firstName: `TCR-${i + 1}`,
+        lastName: "Driver",
+        position: 23 + i,
+        classPosition: i + 1,
+        isCarOnTrack: true,
+        iRating: 3000 + i * 100,
+        carClassShortName: "TCR",
+        carClassId: 404,
+        isSelected: i === 3, // Select the 4th TCR driver
+        fastestLap: 106.5 + i, // ~01:46+
+      })),
+
+      // Class: MX5 (7 drivers)
+      ...Array.from({ length: 7 }, (_, i) => ({
+        carIdx: 200 + i,
+        carNumber: 200 + i,
+        firstName: `MX5-${i + 1}`,
+        lastName: "Driver",
+        position: 31 + i,
+        classPosition: i + 1,
+        isCarOnTrack: true,
+        iRating: 1500 + i * 50,
+        carClassShortName: "MX5",
+        carClassId: 505,
+        isSelected: false,
+        fastestLap: 110.2 + i, // ~01:50+
+      })),
+    ],
+    session: {
+      ...sessionExample,
+      driversRegistered: 6 + 10 + 6 + 8 + 7, // = 37
+    },
+    showTopNCount: 7,
+  },
+};
+
+export const CompactView: Story = {
+  args: {
+    drivers: exampleDrivers,
+    session: sessionExample,
+    headerFontSize: 10,
+    groupHeaderFontSize: 10,
+    driverNameFontSize: 10,
+    positionFontSize: 10,
+    carNumberFontSize: 9,
+    iRatingFontSize: 9,
+    fastestLapFontSize: 9,
+    headerHeightPx: 30,
+    groupHeaderMinHeightPx: 15,
+    groupHeaderMarginBottomPx: 4,
+    groupSeparatorHeightPx: 1,
+    groupSeparatorMarginVerticalPx: 2,
+    driverRowMinHeightPx: 18, // Very compact row height
+    driverRowPaddingVerticalPx: 1,
+    driverRowBorderBottomPx: 0, // No border for super compact
+    groupContainerPaddingPx: 5,
+    driversSectionPaddingPx: 5,
+    groupGapPx: 1,
+    showTopNCount: 2, // Show fewer top drivers
+  },
+};
+
+export const LargeFontsAndRows: Story = {
+  args: {
+    drivers: exampleDrivers,
+    session: sessionExample,
+    headerFontSize: 24,
+    groupHeaderFontSize: 20,
+    driverNameFontSize: 18,
+    positionFontSize: 18,
+    carNumberFontSize: 16,
+    iRatingFontSize: 16,
+    fastestLapFontSize: 16,
+    headerHeightPx: 60,
+    groupHeaderMinHeightPx: 30,
+    groupHeaderMarginBottomPx: 12,
+    groupSeparatorHeightPx: 2,
+    groupSeparatorMarginVerticalPx: 8,
+    driverRowMinHeightPx: 40, // Larger row height
+    driverRowPaddingVerticalPx: 8,
+    driverRowBorderBottomPx: 2,
+    groupContainerPaddingPx: 15,
+    driversSectionPaddingPx: 20,
+    groupGapPx: 10,
   },
 };

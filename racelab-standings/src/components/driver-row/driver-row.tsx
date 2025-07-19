@@ -7,14 +7,17 @@ import styles from "./driver-row.module.css";
 interface Props {
   driver: Driver;
   isFastestInGroup?: boolean;
-  driverNameFontSize?: string;
-  positionFontSize?: string;
-  carNumberFontSize?: string;
-  iRatingFontSize?: string;
-  fastestLapFontSize?: string;
+  driverNameFontSize?: number;
+  positionFontSize?: number;
+  carNumberFontSize?: number;
+  iRatingFontSize?: number;
+  fastestLapFontSize?: number;
   selectedDriverHighlightColor?: string;
   fastestLapHighlightColor?: string;
   isLightTheme?: boolean;
+  driverRowMinHeightPx?: number; // New prop for min-height
+  driverRowPaddingVerticalPx?: number; // New prop for vertical padding
+  driverRowBorderBottomPx?: number; // New prop for border bottom
 }
 
 export const DriverRow = ({
@@ -28,6 +31,9 @@ export const DriverRow = ({
   selectedDriverHighlightColor,
   fastestLapHighlightColor,
   isLightTheme,
+  driverRowMinHeightPx,
+  driverRowPaddingVerticalPx,
+  driverRowBorderBottomPx,
 }: Props) => {
   const fullName = `${driver.firstName} ${driver.middleName ? driver.middleName + " " : ""}${driver.lastName}`;
   const themeClass = isLightTheme ? styles.lightTheme : "";
@@ -38,10 +44,16 @@ export const DriverRow = ({
       style={
         {
           "--selected-highlight-color": selectedDriverHighlightColor,
+          "--driver-row-min-height": `${driverRowMinHeightPx}px`,
+          "--driver-row-padding-vertical": `${driverRowPaddingVerticalPx}px`,
+          "--driver-row-border-bottom": `${driverRowBorderBottomPx}px`,
         } as React.CSSProperties
       }
     >
-      <div className={styles.position} style={{ fontSize: positionFontSize }}>
+      <div
+        className={styles.position}
+        style={{ fontSize: `${positionFontSize}px` }}
+      >
         {driver.classPosition}
       </div>
       <CarNumber
@@ -49,11 +61,17 @@ export const DriverRow = ({
         carClassId={driver.carClassId}
         fontSize={carNumberFontSize}
       />
-      <div className={styles.name} style={{ fontSize: driverNameFontSize }}>
+      <div
+        className={styles.name}
+        style={{ fontSize: `${driverNameFontSize}px` }}
+      >
         {fullName}
       </div>
       {driver.iRating !== undefined && (
-        <div className={styles.iRating} style={{ fontSize: iRatingFontSize }}>
+        <div
+          className={styles.iRating}
+          style={{ fontSize: `${iRatingFontSize}px` }}
+        >
           {Math.round(driver.iRating / 100) / 10}k
         </div>
       )}
@@ -62,7 +80,7 @@ export const DriverRow = ({
           className={`${styles.fastestLap} ${isFastestInGroup ? styles.highlight : ""}`}
           style={
             {
-              fontSize: fastestLapFontSize,
+              fontSize: `${fastestLapFontSize}px`,
               "--fastest-lap-highlight-color": fastestLapHighlightColor,
             } as React.CSSProperties
           }

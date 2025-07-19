@@ -4,7 +4,7 @@ import styles from "./car-number.module.css";
 interface Props {
   carNumber: number;
   carClassId?: number;
-  fontSize?: string;
+  fontSize?: number; // Changed to number
 }
 
 export const CarNumber = ({ carNumber, carClassId, fontSize }: Props) => {
@@ -13,7 +13,7 @@ export const CarNumber = ({ carNumber, carClassId, fontSize }: Props) => {
   return (
     <div
       className={styles.carNumberWrapper}
-      style={{ backgroundColor: backgroundColor, fontSize: fontSize }}
+      style={{ backgroundColor: backgroundColor, fontSize: `${fontSize}px` }}
     >
       #{carNumber}
     </div>

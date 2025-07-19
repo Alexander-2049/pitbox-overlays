@@ -2,14 +2,14 @@
   display: grid;
   grid-template-columns: 40px 40px 1fr 60px 100px; /* Adjust column widths as needed */
   align-items: center;
-  padding: 3px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Light separator for dark theme */
+  padding: var(--driver-row-padding-vertical) 0; /* Controlled by prop */
+  border-bottom: var(--driver-row-border-bottom) solid rgba(255, 255, 255, 0.05); /* Controlled by prop */
   transition: background-color 0.2s ease-in-out;
-  min-height: 15px; /* Ensure consistent row height */
+  min-height: var(--driver-row-min-height); /* Controlled by prop */
 }
 
 .driverRow.lightTheme {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Light separator for light theme */
+  border-bottom-color: rgba(0, 0, 0, 0.05); /* Light separator for light theme */
 }
 
 .driverRow:last-child {

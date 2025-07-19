@@ -1,5 +1,5 @@
-import type { Driver } from "./Driver"; // Assuming Driver is defined in a separate file
-import type { SessionRacing } from "./Session"; // Assuming SessionRacing is defined in a separate file
+import type { Driver } from "./Driver";
+import type { SessionRacing } from "./Session";
 
 export interface StandingsProps {
   drivers: Driver[];
@@ -7,16 +7,28 @@ export interface StandingsProps {
   backgroundColor?: string;
   backgroundOpacity?: number;
   textColor?: string;
-  headerFontSize?: string;
-  groupHeaderFontSize?: string;
-  driverNameFontSize?: string;
-  positionFontSize?: string;
-  carNumberFontSize?: string;
-  iRatingFontSize?: string;
-  fastestLapFontSize?: string;
-  showTopNCount?: number; // Renamed from topNCount
+  headerFontSize?: number;
+  groupHeaderFontSize?: number;
+  driverNameFontSize?: number;
+  positionFontSize?: number;
+  carNumberFontSize?: number;
+  iRatingFontSize?: number;
+  fastestLapFontSize?: number;
+  showTopNCount?: number;
   selectedDriverHighlightColor?: string;
   fastestLapHighlightColor?: string;
   groupSeparatorColor?: string;
-  isLightTheme?: boolean; // New prop for light theme
+  isLightTheme?: boolean;
+  // New props for all constants, now as numbers
+  headerHeightPx?: number;
+  groupHeaderMinHeightPx?: number;
+  groupHeaderMarginBottomPx?: number;
+  groupSeparatorHeightPx?: number;
+  groupSeparatorMarginVerticalPx?: number;
+  driverRowMinHeightPx?: number;
+  driverRowPaddingVerticalPx?: number;
+  driverRowBorderBottomPx?: number;
+  groupContainerPaddingPx?: number;
+  driversSectionPaddingPx?: number;
+  groupGapPx?: number;
 }

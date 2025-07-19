@@ -15,8 +15,8 @@
 .driversSection {
   flex-grow: 1; /* Allow this section to take available space */
   overflow: hidden; /* No scrollbar */
-  padding: 10px; /* Padding around the groups */
+  padding: var(--drivers-section-padding-vertical) 10px; /* Controlled by prop */
   display: flex;
   flex-direction: column;
-  gap: 5px; /* Space between groups */
+  gap: var(--group-gap); /* Controlled by prop */
 }

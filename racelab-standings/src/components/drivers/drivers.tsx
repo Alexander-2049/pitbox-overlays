@@ -1,5 +1,3 @@
-"use client";
-
 // This component is now effectively a passthrough for the grouped drivers.
 // The main logic for which groups/drivers to render is in Standings.tsx.
 // Keeping it for file structure, but it could potentially be merged into Standings.
@@ -10,12 +8,12 @@ import { useMemo } from "react";
 interface Props {
   drivers: Driver[];
   textColor?: string;
-  groupHeaderFontSize?: string;
-  driverNameFontSize?: string;
-  positionFontSize?: string;
-  carNumberFontSize?: string;
-  iRatingFontSize?: string;
-  fastestLapFontSize?: string;
+  groupHeaderFontSize?: number;
+  driverNameFontSize?: number;
+  positionFontSize?: number;
+  carNumberFontSize?: number;
+  iRatingFontSize?: number;
+  fastestLapFontSize?: number;
   selectedDriverHighlightColor?: string;
   fastestLapHighlightColor?: string;
   groupSeparatorColor?: string;
@@ -23,6 +21,15 @@ interface Props {
   maxDriversToRender: Map<number, number>; // Map of carClassId to maxDriversToRender
   isLightTheme?: boolean;
   groupBackgroundColor?: string;
+  // New size props
+  groupHeaderMinHeightPx?: number;
+  groupHeaderMarginBottomPx?: number;
+  groupSeparatorHeightPx?: number;
+  groupSeparatorMarginVerticalPx?: number;
+  driverRowMinHeightPx?: number;
+  driverRowPaddingVerticalPx?: number;
+  driverRowBorderBottomPx?: number;
+  groupContainerPaddingPx?: number;
 }
 
 export const Drivers = ({
@@ -40,6 +47,14 @@ export const Drivers = ({
   maxDriversToRender, // This is now a map
   isLightTheme,
   groupBackgroundColor,
+  groupHeaderMinHeightPx,
+  groupHeaderMarginBottomPx,
+  groupSeparatorHeightPx,
+  groupSeparatorMarginVerticalPx,
+  driverRowMinHeightPx,
+  driverRowPaddingVerticalPx,
+  driverRowBorderBottomPx,
+  groupContainerPaddingPx,
 }: Props) => {
   // Group drivers by carClassId and sort groups by fastest lap
   const groupedDrivers = useMemo(() => {
@@ -101,6 +116,14 @@ export const Drivers = ({
             maxDriversToRender={driversToRenderInThisGroup}
             isLightTheme={isLightTheme}
             groupBackgroundColor={groupBackgroundColor}
+            groupHeaderMinHeightPx={groupHeaderMinHeightPx}
+            groupHeaderMarginBottomPx={groupHeaderMarginBottomPx}
+            groupSeparatorHeightPx={groupSeparatorHeightPx}
+            groupSeparatorMarginVerticalPx={groupSeparatorMarginVerticalPx}
+            driverRowMinHeightPx={driverRowMinHeightPx}
+            driverRowPaddingVerticalPx={driverRowPaddingVerticalPx}
+            driverRowBorderBottomPx={driverRowBorderBottomPx}
+            groupContainerPaddingPx={groupContainerPaddingPx}
           />
         );
       })}

@@ -1,5 +1,5 @@
 .wrapper {
-  height: 40px;
+  height: var(--header-height); /* Controlled by prop */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -24,7 +24,7 @@
 }
 
 .sessionType {
-  font-size: 18px;
+  font-size: 0.9em; /* Relative to wrapper font-size */
 }
 
 .verticalLine {
@@ -38,7 +38,7 @@
 }
 
 .currentTime {
-  font-size: 20px;
+  font-size: 1.1em; /* Relative to wrapper font-size */
 }
 
 .temperature {
@@ -46,11 +46,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 20px;
+  font-size: 1.1em; /* Relative to wrapper font-size */
 }
 
 .driversRegistered {
-  font-size: 16px;
+  font-size: 0.8em; /* Relative to wrapper font-size */
   color: #ccc;
 }
 

@@ -2,12 +2,14 @@ import type { SessionRacing } from "../../types/Session";
 import { formatCurrentTime } from "../../utils/formatters";
 import styles from "./header.module.css";
 import { Thermometer } from "lucide-react";
+import type React from "react";
 
 interface Props {
   session: SessionRacing;
   textColor?: string;
-  fontSize?: string;
+  fontSize?: number; // Changed to number
   isLightTheme?: boolean;
+  heightPx?: number; // New prop for height in pixels
 }
 
 export const Header = ({
@@ -15,13 +17,20 @@ export const Header = ({
   textColor,
   fontSize,
   isLightTheme,
+  heightPx,
 }: Props) => {
   const themeClass = isLightTheme ? styles.lightTheme : "";
 
   return (
     <div
       className={`${styles.wrapper} ${themeClass}`}
-      style={{ color: textColor, fontSize: fontSize }}
+      style={
+        {
+          color: textColor,
+          fontSize: `${fontSize}px`,
+          "--header-height": `${heightPx}px`,
+        } as React.CSSProperties
+      }
     >
       <div className={styles.sessionInfo}>
         {session.sessionType && (
@@ -45,7 +54,8 @@ export const Header = ({
       )}
       {session.temperature !== undefined && (
         <div className={styles.temperature}>
-          {session.temperature} <Thermometer size={16} />
+          {session.temperature}{" "}
+          <Thermometer size={fontSize ? fontSize * 0.8 : 16} />
         </div>
       )}
     </div>

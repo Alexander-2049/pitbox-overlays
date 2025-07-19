@@ -10,18 +10,27 @@ interface Props {
   groupName?: string;
   groupColor?: string; // This will be the base color for the group header dot
   textColor?: string;
-  groupHeaderFontSize?: string;
-  driverNameFontSize?: string;
-  positionFontSize?: string;
-  carNumberFontSize?: string;
-  iRatingFontSize?: string;
-  fastestLapFontSize?: string;
+  groupHeaderFontSize?: number;
+  driverNameFontSize?: number;
+  positionFontSize?: number;
+  carNumberFontSize?: number;
+  iRatingFontSize?: number;
+  fastestLapFontSize?: number;
   selectedDriverHighlightColor?: string;
   fastestLapHighlightColor?: string;
   groupSeparatorColor?: string;
   maxDriversToRender: number; // New prop: exact number of drivers to render
   isLightTheme?: boolean;
   groupBackgroundColor?: string;
+  // New size props
+  groupHeaderMinHeightPx?: number;
+  groupHeaderMarginBottomPx?: number;
+  groupSeparatorHeightPx?: number;
+  groupSeparatorMarginVerticalPx?: number;
+  driverRowMinHeightPx?: number;
+  driverRowPaddingVerticalPx?: number;
+  driverRowBorderBottomPx?: number;
+  groupContainerPaddingPx?: number;
 }
 
 export const Group = ({
@@ -41,6 +50,14 @@ export const Group = ({
   maxDriversToRender,
   isLightTheme,
   groupBackgroundColor,
+  groupHeaderMinHeightPx,
+  groupHeaderMarginBottomPx,
+  groupSeparatorHeightPx,
+  groupSeparatorMarginVerticalPx,
+  driverRowMinHeightPx,
+  driverRowPaddingVerticalPx,
+  driverRowBorderBottomPx,
+  groupContainerPaddingPx,
 }: Props) => {
   const sortedDriversInGroup = useMemo(
     () => [...drivers].sort((a, b) => a.classPosition - b.classPosition),
@@ -72,7 +89,7 @@ export const Group = ({
       finalAddedIndices.add(sortedDriversInGroup.indexOf(selectedDriver));
     }
 
-    // 2. Add top N drivers (up to showTopNCount)
+    // 2. Add top N drivers (up to maxDriversToRender)
     for (
       let i = 0;
       i < sortedDriversInGroup.length &&
@@ -140,23 +157,35 @@ export const Group = ({
   return (
     <div
       className={`${styles.groupContainer} ${themeClass}`}
-      style={{
-        backgroundColor: groupBackgroundColor,
-        color: textColor,
-      }}
+      style={
+        {
+          backgroundColor: groupBackgroundColor,
+          color: textColor,
+          "--group-container-padding": `${groupContainerPaddingPx}px`,
+        } as React.CSSProperties
+      }
     >
       <div
         className={`${styles.groupHeader} ${themeClass}`}
         style={
           {
-            fontSize: groupHeaderFontSize,
+            fontSize: `${groupHeaderFontSize}px`,
             "--group-color": groupHeaderColor,
+            "--group-header-min-height": `${groupHeaderMinHeightPx}px`,
+            "--group-header-margin-bottom": `${groupHeaderMarginBottomPx}px`,
           } as React.CSSProperties
         }
       >
-        <span>{groupName}</span>
-        <span className={`${styles.driverCount} ${themeClass}`}>
-          {drivers.length}
+        <span>
+          {groupName}
+          <b
+            className={`${styles.driverCount} ${themeClass}`}
+            style={{
+              fontSize: `${groupHeaderFontSize ? groupHeaderFontSize * 0.8 : undefined}px`,
+            }}
+          >
+            ({drivers.length})
+          </b>
         </span>
       </div>
       <div
@@ -164,6 +193,8 @@ export const Group = ({
         style={
           {
             "--group-separator-color": groupSeparatorColor,
+            "--group-separator-height": `${groupSeparatorHeightPx}px`,
+            "--group-separator-margin-vertical": `${groupSeparatorMarginVerticalPx}px`,
           } as React.CSSProperties
         }
       />
@@ -183,6 +214,9 @@ export const Group = ({
           selectedDriverHighlightColor={selectedDriverHighlightColor}
           fastestLapHighlightColor={fastestLapHighlightColor}
           isLightTheme={isLightTheme}
+          driverRowMinHeightPx={driverRowMinHeightPx}
+          driverRowPaddingVerticalPx={driverRowPaddingVerticalPx}
+          driverRowBorderBottomPx={driverRowBorderBottomPx}
         />
       ))}
     </div>
