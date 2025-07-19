@@ -24,8 +24,7 @@ interface Props {
   // New size props
   groupHeaderMinHeightPx?: number;
   groupHeaderMarginBottomPx?: number;
-  groupSeparatorHeightPx?: number;
-  groupSeparatorMarginVerticalPx?: number;
+  showTopNCount: number;
   driverRowMinHeightPx?: number;
   driverRowPaddingVerticalPx?: number;
   driverRowBorderBottomPx?: number;
@@ -49,12 +48,11 @@ export const Drivers = ({
   groupBackgroundColor,
   groupHeaderMinHeightPx,
   groupHeaderMarginBottomPx,
-  groupSeparatorHeightPx,
-  groupSeparatorMarginVerticalPx,
   driverRowMinHeightPx,
   driverRowPaddingVerticalPx,
   driverRowBorderBottomPx,
   groupContainerPaddingPx,
+  showTopNCount,
 }: Props) => {
   // Group drivers by carClassId and sort groups by fastest lap
   const groupedDrivers = useMemo(() => {
@@ -118,12 +116,11 @@ export const Drivers = ({
             groupBackgroundColor={groupBackgroundColor}
             groupHeaderMinHeightPx={groupHeaderMinHeightPx}
             groupHeaderMarginBottomPx={groupHeaderMarginBottomPx}
-            groupSeparatorHeightPx={groupSeparatorHeightPx}
-            groupSeparatorMarginVerticalPx={groupSeparatorMarginVerticalPx}
             driverRowMinHeightPx={driverRowMinHeightPx}
             driverRowPaddingVerticalPx={driverRowPaddingVerticalPx}
             driverRowBorderBottomPx={driverRowBorderBottomPx}
             groupContainerPaddingPx={groupContainerPaddingPx}
+            showTopNCount={showTopNCount}
           />
         );
       })}
