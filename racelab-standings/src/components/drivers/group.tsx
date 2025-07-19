@@ -135,7 +135,7 @@ export const Group = ({
       i++
     ) {
       if (!finalAddedIndices.has(i)) {
-        finalDrivers.push(sortedDriversInGroup[i]);
+        finalDrivers.push(sortedDriversInGroup[i]); // Use sortedDriversInGroup here
         finalAddedIndices.add(i);
       }
     }

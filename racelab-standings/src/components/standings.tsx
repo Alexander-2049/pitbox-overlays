@@ -27,16 +27,16 @@ const Standings = ({
   isLightTheme = false,
   // New size props with default values matching the user's request or original effective values
   headerHeightPx = 40,
-  groupHeaderMinHeightPx = 20, // User's new constant
-  groupHeaderMarginBottomPx = 8, // Fixed margin from CSS
-  groupSeparatorHeightPx = 1, // Fixed height from CSS
-  groupSeparatorMarginVerticalPx = 4, // Fixed margin from CSS (4px top + 4px bottom = 8px total vertical margin)
+  groupHeaderMinHeightPx = 20,
+  groupHeaderMarginBottomPx = 8,
+  groupSeparatorHeightPx = 1,
+  groupSeparatorMarginVerticalPx = 4,
   driverRowMinHeightPx = 25, // User's request for default row height
-  driverRowPaddingVerticalPx = 3, // Fixed padding from CSS (3px top + 3px bottom = 6px total vertical padding)
-  driverRowBorderBottomPx = 1, // Fixed border from CSS
-  groupContainerPaddingPx = 10, // Fixed padding from CSS (10px all sides, so 20px vertical)
-  driversSectionPaddingPx = 10, // Fixed padding from CSS (10px all sides, so 20px vertical)
-  groupGapPx = 2, // User's new constant
+  driverRowPaddingVerticalPx = 3,
+  driverRowBorderBottomPx = 1,
+  groupContainerPaddingPx = 10,
+  driversSectionPaddingPx = 10,
+  groupGapPx = 2,
 }: StandingsProps) => {
   const driversSectionRef = useRef<HTMLDivElement>(null);
   const [availableDriversHeight, setAvailableDriversHeight] = useState(0);
@@ -173,6 +173,22 @@ const Standings = ({
     effectiveDriverRowHeight,
   ]);
 
+  // Helper to calculate total height of all groups based on currentDriversPerGroup map
+  const calculateCurrentTotalHeight = (map: Map<number, number>) => {
+    let height = 0;
+    let renderedGroupCount = 0;
+    map.forEach((numDrivers) => {
+      if (numDrivers > 0) {
+        height += calculateGroupRenderHeight(numDrivers);
+        renderedGroupCount++;
+      }
+    });
+    if (renderedGroupCount > 0) {
+      height += (renderedGroupCount - 1) * groupGapPx;
+    }
+    return height;
+  };
+
   const groupsToRender = useMemo(() => {
     if (availableDriversHeight === 0) return [];
 
@@ -184,213 +200,195 @@ const Standings = ({
           groupDrivers.some((d) => d.carIdx === selectedDriver.carIdx)
         )
       : undefined;
-
-    // Step 1: Determine driver counts to render
-    const currentDriversPerGroup = new Map<number, number>();
-    let remainingHeight = currentRemainingHeight;
-
     const selectedGroupId = selectedGroupEntry?.[0];
 
-    // Track progress for iterative adding
-    const otherGroups = groupedDrivers.filter(([id]) => id !== selectedGroupId);
-    const selectedGroupDrivers = selectedGroupEntry?.[1] ?? [];
-    let selectedGroupCount = 0;
+    const currentDriversPerGroup = new Map<number, number>();
 
-    // Phase 1: Iteratively add one driver to each group (prioritizing selected group)
-    // until showTopNCount is reached for each group or height limit is hit.
-    let iterationCount = 0;
-    let canAddMore = true;
+    // --- Scenario: No selected driver ---
+    if (!selectedDriver) {
+      // Phase 1: Initialize all groups to show showTopNCount drivers
+      groupedDrivers.forEach(([carClassId, groupDrivers]) => {
+        currentDriversPerGroup.set(
+          carClassId,
+          Math.min(groupDrivers.length, showTopNCount)
+        );
+      });
 
-    while (canAddMore) {
-      canAddMore = false;
+      let currentTotalHeight = calculateCurrentTotalHeight(
+        currentDriversPerGroup
+      );
 
-      // Try to add to selected group first
-      if (
-        selectedGroupEntry &&
-        selectedGroupCount < selectedGroupDrivers.length &&
-        selectedGroupCount < showTopNCount
+      // Phase 2: Iteratively shrink groups (from showTopNCount down to 1)
+      // Shrink one driver from each group in a round-robin fashion until it fits or all are at 1.
+      let changedThisIteration = true; // Start with true to enter loop
+      while (
+        currentTotalHeight > currentRemainingHeight &&
+        changedThisIteration
       ) {
-        const potentialNewHeight = calculateGroupRenderHeight(
-          selectedGroupCount + 1
-        );
-        const currentGroupHeight =
-          calculateGroupRenderHeight(selectedGroupCount);
-        const heightIncrease = potentialNewHeight - currentGroupHeight;
-
-        if (remainingHeight >= heightIncrease) {
-          selectedGroupCount++;
-          currentDriversPerGroup.set(selectedGroupId!, selectedGroupCount);
-          remainingHeight -= heightIncrease;
-          canAddMore = true;
-        }
-      }
-
-      // Then try to add to other groups
-      for (const [groupId, groupDrivers] of otherGroups) {
-        const current = currentDriversPerGroup.get(groupId) || 0;
-        if (current < groupDrivers.length && current < showTopNCount) {
-          const potentialNewHeight = calculateGroupRenderHeight(current + 1);
-          const currentGroupHeight = calculateGroupRenderHeight(current);
-          const heightIncrease = potentialNewHeight - currentGroupHeight;
-
-          if (remainingHeight >= heightIncrease) {
-            currentDriversPerGroup.set(groupId, current + 1);
-            remainingHeight -= heightIncrease;
-            canAddMore = true;
-          }
-        }
-      }
-
-      iterationCount++;
-      if (iterationCount > drivers.length * 2) break; // Safety break
-    }
-
-    // Phase 2: If there's still space, give all remaining height to selected group
-    if (selectedGroupEntry) {
-      const [carClassId, groupDrivers] = selectedGroupEntry;
-      const currentSelectedGroupDrivers =
-        currentDriversPerGroup.get(carClassId) || 0;
-
-      // Calculate how many more drivers can fit in the selected group
-      const remainingSpaceForDrivers = Math.floor(
-        remainingHeight / effectiveDriverRowHeight
-      );
-
-      const newNumDrivers = Math.min(
-        groupDrivers.length,
-        currentSelectedGroupDrivers + remainingSpaceForDrivers
-      );
-
-      if (newNumDrivers > currentSelectedGroupDrivers) {
-        currentDriversPerGroup.set(carClassId, newNumDrivers);
-      }
-    }
-
-    // Calculate the total height of rendered groups
-    const calculateCurrentTotalHeight = (map: Map<number, number>) => {
-      let height = 0;
-      let renderedGroupCount = 0;
-      map.forEach((numDrivers) => {
-        if (numDrivers > 0) {
-          height += calculateGroupRenderHeight(numDrivers);
-          renderedGroupCount++;
-        }
-      });
-      if (renderedGroupCount > 0) {
-        height += (renderedGroupCount - 1) * groupGapPx;
-      }
-      return height;
-    };
-
-    let currentTotalHeight = calculateCurrentTotalHeight(
-      currentDriversPerGroup
-    );
-
-    // Step 3: Iteratively shrink groups until total height fits or no more shrinking possible
-    while (currentTotalHeight > currentRemainingHeight) {
-      let changedThisIteration = false;
-
-      // Phase 3a: Shrink groups with > 3 drivers (prioritize non-selected, then selected)
-      const shrinkCandidatesGT3: [number, number][] = [];
-      currentDriversPerGroup.forEach((numDrivers, carClassId) => {
-        if (numDrivers > 3) {
-          shrinkCandidatesGT3.push([carClassId, numDrivers]);
-        }
-      });
-
-      shrinkCandidatesGT3.sort((a, b) => {
-        const isASelected =
-          selectedGroupEntry && a[0] === selectedGroupEntry[0];
-        const isBSelected =
-          selectedGroupEntry && b[0] === selectedGroupEntry[0];
-
-        if (isASelected && !isBSelected) return 1;
-        if (!isASelected && isBSelected) return -1;
-        return b[1] - a[1]; // Sort by number of drivers descending
-      });
-
-      if (shrinkCandidatesGT3.length > 0) {
-        const [carClassIdToShrink] = shrinkCandidatesGT3[0];
-        const oldNumDrivers = currentDriversPerGroup.get(carClassIdToShrink)!;
-        currentDriversPerGroup.set(carClassIdToShrink, oldNumDrivers - 1);
-        currentTotalHeight = calculateCurrentTotalHeight(
-          currentDriversPerGroup
-        );
-        changedThisIteration = true;
-      } else {
-        // Phase 3b: All groups are now at 3 drivers or less. Shrink groups with > 1 driver (prioritize non-selected, then selected)
-        const shrinkCandidatesGT1: [number, number][] = [];
+        changedThisIteration = false;
+        const shrinkableGroups: number[] = [];
         currentDriversPerGroup.forEach((numDrivers, carClassId) => {
           if (numDrivers > 1) {
-            shrinkCandidatesGT1.push([carClassId, numDrivers]);
+            shrinkableGroups.push(carClassId);
           }
         });
 
-        shrinkCandidatesGT1.sort((a, b) => {
-          const isASelected =
-            selectedGroupEntry && a[0] === selectedGroupEntry[0];
-          const isBSelected =
-            selectedGroupEntry && b[0] === selectedGroupEntry[0];
+        if (shrinkableGroups.length === 0) {
+          // No groups can shrink further (all are at 1 or 0 drivers)
+          break;
+        }
 
-          if (isASelected && !isBSelected) return 1;
-          if (!isASelected && isBSelected) return -1;
-          return b[1] - a[1];
-        });
+        // Sort shrinkable groups to maintain a consistent shrinking order (e.g., by carClassId)
+        shrinkableGroups.sort((a, b) => a - b);
 
-        if (shrinkCandidatesGT1.length > 0) {
-          const [carClassIdToShrink] = shrinkCandidatesGT1[0];
-          const oldNumDrivers = currentDriversPerGroup.get(carClassIdToShrink)!;
-          currentDriversPerGroup.set(carClassIdToShrink, oldNumDrivers - 1);
+        for (const carClassId of shrinkableGroups) {
+          const oldNumDrivers = currentDriversPerGroup.get(carClassId)!;
+          currentDriversPerGroup.set(carClassId, oldNumDrivers - 1);
           currentTotalHeight = calculateCurrentTotalHeight(
             currentDriversPerGroup
           );
           changedThisIteration = true;
-        } else {
-          // Phase 3c: All groups are now at 1 driver or 0. Hide groups (prioritize non-selected, then selected if no other option)
-          let hiddenAGroup = false;
-          // Find a group to hide. Iterate through original sorted groups to maintain order.
-          for (const [carClassId] of groupedDrivers) {
-            const isCurrentGroupSelected =
-              selectedGroupEntry && carClassId === selectedGroupEntry[0];
-            const numDrivers = currentDriversPerGroup.get(carClassId) || 0;
+          if (currentTotalHeight <= currentRemainingHeight) break; // Stop if it fits
+        }
+      }
 
-            if (numDrivers > 0 && !isCurrentGroupSelected) {
-              currentDriversPerGroup.set(carClassId, 0); // Hide this group
-              currentTotalHeight = calculateCurrentTotalHeight(
-                currentDriversPerGroup
+      // Phase 3: If still too tall, start hiding groups one by one (from the end of sorted groups)
+      if (currentTotalHeight > currentRemainingHeight) {
+        // Iterate in reverse order of groupedDrivers to hide less important groups first
+        for (let i = groupedDrivers.length - 1; i >= 0; i--) {
+          const [carClassId] = groupedDrivers[i];
+          if ((currentDriversPerGroup.get(carClassId) || 0) > 0) {
+            currentDriversPerGroup.set(carClassId, 0); // Hide this group
+            currentTotalHeight = calculateCurrentTotalHeight(
+              currentDriversPerGroup
+            );
+            if (currentTotalHeight <= currentRemainingHeight) break; // Stop if it fits
+          }
+        }
+      }
+    }
+    // --- Scenario: Selected driver exists ---
+    else {
+      const otherGroups = groupedDrivers.filter(
+        ([id]) => id !== selectedGroupId
+      );
+      const selectedGroupDrivers = selectedGroupEntry?.[1] ?? [];
+
+      // Calculate height needed for selected group with showTopNCount drivers
+      const selectedGroupTargetDrivers = Math.min(
+        selectedGroupDrivers.length,
+        showTopNCount
+      );
+      const heightForSelectedGroupTarget = calculateGroupRenderHeight(
+        selectedGroupTargetDrivers
+      );
+
+      // Calculate height needed for other groups with at least 1 driver each
+      let heightForOtherGroupsMin = 0;
+      if (otherGroups.length > 0) {
+        heightForOtherGroupsMin =
+          otherGroups.length * calculateGroupRenderHeight(1);
+        if (otherGroups.length > 1) {
+          heightForOtherGroupsMin += (otherGroups.length - 1) * groupGapPx;
+        }
+      }
+
+      let totalRequiredHeightForIdeal =
+        heightForSelectedGroupTarget + heightForOtherGroupsMin;
+      // Add gap if both selected group and other groups are present
+      if (selectedGroupEntry && otherGroups.length > 0) {
+        totalRequiredHeightForIdeal += groupGapPx;
+      }
+
+      // Condition 1: Enough space for showTopNCount in selected + 1 in others
+      if (currentRemainingHeight >= totalRequiredHeightForIdeal) {
+        // Set selected group to show showTopNCount drivers
+        currentDriversPerGroup.set(
+          selectedGroupId!,
+          selectedGroupTargetDrivers
+        );
+        // Set other groups to 1 driver
+        otherGroups.forEach(([carClassId, groupDrivers]) => {
+          currentDriversPerGroup.set(
+            carClassId,
+            Math.min(groupDrivers.length, 1)
+          );
+        });
+
+        const currentTotalHeight = calculateCurrentTotalHeight(
+          currentDriversPerGroup
+        );
+        let remainingSpace = currentRemainingHeight - currentTotalHeight;
+
+        // Distribute remaining space by adding drivers one by one
+        // Prioritize selected group first, then others, until full or no space
+        let canAddMore = true;
+        while (canAddMore && remainingSpace > 0) {
+          canAddMore = false;
+
+          // Try to add to selected group
+          const currentSelectedCount =
+            currentDriversPerGroup.get(selectedGroupId!) || 0;
+          if (currentSelectedCount < selectedGroupDrivers.length) {
+            const heightIncrease = effectiveDriverRowHeight;
+            if (remainingSpace >= heightIncrease) {
+              currentDriversPerGroup.set(
+                selectedGroupId!,
+                currentSelectedCount + 1
               );
-              hiddenAGroup = true;
-              changedThisIteration = true;
-              break;
+              remainingSpace -= heightIncrease;
+              canAddMore = true;
             }
           }
 
-          if (!hiddenAGroup && selectedGroupEntry) {
-            const [selectedCarClassId] = selectedGroupEntry;
-            const numDriversInSelectedGroup =
-              currentDriversPerGroup.get(selectedCarClassId) || 0;
-            if (numDriversInSelectedGroup > 0) {
-              currentDriversPerGroup.set(selectedCarClassId, 0); // Hide selected group
-              currentTotalHeight = calculateCurrentTotalHeight(
-                currentDriversPerGroup
-              );
-              changedThisIteration = true;
+          // Then try to add to other groups (round-robin)
+          for (const [carClassId, groupDrivers] of otherGroups) {
+            const currentCount = currentDriversPerGroup.get(carClassId) || 0;
+            if (currentCount < groupDrivers.length) {
+              const heightIncrease = effectiveDriverRowHeight;
+              if (remainingSpace >= heightIncrease) {
+                currentDriversPerGroup.set(carClassId, currentCount + 1);
+                remainingSpace -= heightIncrease;
+                canAddMore = true;
+              }
             }
           }
         }
       }
-
-      if (!changedThisIteration) {
-        break;
+      // Condition 2: Not enough space for showTopNCount in selected + 1 in others
+      else {
+        // Check if selected group can fit at least 1 driver
+        const heightForSelectedGroupMin = calculateGroupRenderHeight(1);
+        if (currentRemainingHeight >= heightForSelectedGroupMin) {
+          // Show only drivers from selected group, as many as can fit
+          const maxDriversFitInSelected = Math.floor(
+            (currentRemainingHeight -
+              (effectiveGroupHeaderHeight +
+                effectiveGroupSeparatorHeight +
+                effectiveGroupContainerPaddingVertical)) /
+              effectiveDriverRowHeight
+          );
+          currentDriversPerGroup.set(
+            selectedGroupId!,
+            Math.min(
+              selectedGroupDrivers.length,
+              Math.max(1, maxDriversFitInSelected)
+            )
+          ); // Ensure at least 1 if space allows
+          // Hide all other groups
+          otherGroups.forEach(([carClassId]) =>
+            currentDriversPerGroup.set(carClassId, 0)
+          );
+        } else {
+          // Cannot even fit 1 driver from selected group, hide all
+          groupedDrivers.forEach(([carClassId]) =>
+            currentDriversPerGroup.set(carClassId, 0)
+          );
+        }
       }
     }
 
-    // If it still doesn't fit, return empty
-    if (currentTotalHeight > currentRemainingHeight) {
-      return [];
-    }
-
-    // Construct the final renderable groups list
+    // Final construction of renderable groups
     const finalRenderableGroups: {
       groupEntry: [number, Driver[]];
       maxDriversToRender: number;
@@ -416,6 +414,9 @@ const Standings = ({
     groupGapPx,
     calculateGroupRenderHeight,
     effectiveDriverRowHeight,
+    effectiveGroupHeaderHeight,
+    effectiveGroupSeparatorHeight,
+    effectiveGroupContainerPaddingVertical,
   ]);
 
   const themeClass = isLightTheme ? styles.lightTheme : "";
