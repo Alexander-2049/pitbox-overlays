@@ -1,8 +1,9 @@
+import type React from "react";
+
 import type { Driver } from "../../types/Driver";
 import { DriverRow } from "../driver-row/driver-row";
 import styles from "./group.module.css";
 import { generateColor } from "../../utils/formatters";
-import type React from "react";
 import { useMemo } from "react";
 
 interface Props {
@@ -25,12 +26,14 @@ interface Props {
   // New size props
   groupHeaderMinHeightPx?: number;
   groupHeaderMarginBottomPx?: number;
-  groupSeparatorHeightPx?: number;
-  groupSeparatorMarginVerticalPx?: number;
+  // Removed groupSeparatorHeightPx?: number
+  // Removed groupSeparatorMarginVerticalPx?: number
   driverRowMinHeightPx?: number;
   driverRowPaddingVerticalPx?: number;
   driverRowBorderBottomPx?: number;
   groupContainerPaddingPx?: number;
+  showTopNCount: number; // New prop
+  gapBetweenTopNAndRestPx?: number; // New prop
 }
 
 export const Group = ({
@@ -46,18 +49,19 @@ export const Group = ({
   fastestLapFontSize,
   selectedDriverHighlightColor,
   fastestLapHighlightColor,
-  groupSeparatorColor,
   maxDriversToRender,
   isLightTheme,
   groupBackgroundColor,
   groupHeaderMinHeightPx,
   groupHeaderMarginBottomPx,
-  groupSeparatorHeightPx,
-  groupSeparatorMarginVerticalPx,
+  // Removed groupSeparatorHeightPx,
+  // Removed groupSeparatorMarginVerticalPx,
   driverRowMinHeightPx,
   driverRowPaddingVerticalPx,
   driverRowBorderBottomPx,
   groupContainerPaddingPx,
+  showTopNCount, // Destructure new prop
+  gapBetweenTopNAndRestPx = 10, // Destructure new prop with default
 }: Props) => {
   const sortedDriversInGroup = useMemo(
     () => [...drivers].sort((a, b) => a.classPosition - b.classPosition),
@@ -74,76 +78,136 @@ export const Group = ({
     );
   }, [sortedDriversInGroup]);
 
-  const driversToDisplay = useMemo(() => {
+  const driversToDisplayResult = useMemo(() => {
     if (maxDriversToRender <= 0) {
-      return [];
+      return { drivers: [], showSeparator: false, separatorIndex: -1 };
     }
 
     const selectedDriver = sortedDriversInGroup.find((d) => d.isSelected);
-    const finalDrivers: Driver[] = [];
-    const finalAddedIndices = new Set<number>();
+    const totalDriversInGroup = sortedDriversInGroup.length;
+    const selectedIndex = selectedDriver
+      ? sortedDriversInGroup.indexOf(selectedDriver)
+      : -1;
 
-    // 1. Add selected driver first if present
-    if (selectedDriver) {
-      finalDrivers.push(selectedDriver);
-      finalAddedIndices.add(sortedDriversInGroup.indexOf(selectedDriver));
-    }
+    // Condition for special truncation logic (selected driver not in top N, and space for window)
+    const needsSpecialWindowLogic =
+      selectedDriver &&
+      selectedIndex !== -1 &&
+      selectedIndex >= showTopNCount && // Selected driver is outside the initial top N
+      maxDriversToRender > showTopNCount; // There's space for a window beyond top N
 
-    // 2. Add top N drivers (up to maxDriversToRender)
-    for (
-      let i = 0;
-      i < sortedDriversInGroup.length &&
-      finalDrivers.length < maxDriversToRender;
-      i++
-    ) {
-      if (!finalAddedIndices.has(i)) {
-        finalDrivers.push(sortedDriversInGroup[i]);
-        finalAddedIndices.add(i);
+    let finalDrivers: Driver[] = [];
+    let showSeparator = false;
+    let separatorIndex = -1;
+
+    if (!needsSpecialWindowLogic) {
+      // Case A: No selected driver, or selected driver is in top N, or maxDriversToRender <= showTopNCount
+      // (including the edge case where selected replaces last top N)
+
+      finalDrivers = sortedDriversInGroup.slice(0, maxDriversToRender);
+
+      // Edge case: if maxDriversToRender is exactly showTopNCount, and selected driver is not in top N,
+      // then replace the last top N driver with the selected driver.
+      if (
+        selectedDriver &&
+        maxDriversToRender === showTopNCount &&
+        selectedIndex !== -1 && // Ensure selected driver exists
+        selectedIndex >= showTopNCount && // Selected driver is outside top N
+        finalDrivers.length > 0 // Ensure there's a last element to replace
+      ) {
+        finalDrivers[finalDrivers.length - 1] = selectedDriver;
+        // Re-sort to ensure selected driver is in its correct classPosition within the truncated list
+        finalDrivers.sort((a, b) => a.classPosition - b.classPosition);
       }
-    }
+    } else {
+      // Case B: Special window logic applies (selected driver is outside top N, and space for window)
 
-    // 3. If there's still space and a selected driver, try to add neighbors around the selected driver
-    if (selectedDriver && finalDrivers.length < maxDriversToRender) {
-      const selectedIndex = sortedDriversInGroup.indexOf(selectedDriver);
+      const topNDrivers = sortedDriversInGroup.slice(0, showTopNCount);
+      const remainingSlotsForWindow = maxDriversToRender - topNDrivers.length;
+
+      const windowDrivers: Driver[] = [];
+      const windowAddedIndices = new Set<number>();
+
+      // Add selected driver to the window first
+      windowDrivers.push(selectedDriver!);
+      windowAddedIndices.add(selectedIndex);
+      let currentWindowSize = 1;
+
       let left = selectedIndex - 1;
       let right = selectedIndex + 1;
 
-      while (
-        finalDrivers.length < maxDriversToRender &&
-        (left >= 0 || right < sortedDriversInGroup.length)
-      ) {
-        if (
-          right < sortedDriversInGroup.length &&
-          !finalAddedIndices.has(right)
-        ) {
-          finalDrivers.push(sortedDriversInGroup[right]);
-          finalAddedIndices.add(right);
-        } else if (left >= 0 && !finalAddedIndices.has(left)) {
-          finalDrivers.push(sortedDriversInGroup[left]);
-          finalAddedIndices.add(left);
-        }
+      // Calculate target X and Y counts for the window
+      const slotsForXandY = remainingSlotsForWindow - 1; // Total slots for drivers other than selected in window
+      let targetX = Math.ceil(slotsForXandY / 2); // Prioritize X (drivers ahead)
+      let targetY = slotsForXandY - targetX; // Remaining for Y (drivers behind)
+
+      // Add drivers ahead (X)
+      while (targetX > 0 && left >= showTopNCount) {
+        windowDrivers.unshift(sortedDriversInGroup[left]); // Add to front to maintain order
+        windowAddedIndices.add(left);
+        currentWindowSize++;
         left--;
+        targetX--;
+      }
+
+      // Add drivers behind (Y)
+      while (targetY > 0 && right < totalDriversInGroup) {
+        windowDrivers.push(sortedDriversInGroup[right]);
+        windowAddedIndices.add(right);
+        currentWindowSize++;
         right++;
+        targetY--;
+      }
+
+      // If we still have slots and couldn't fill X or Y completely due to boundaries, fill remaining greedily
+      while (currentWindowSize < remainingSlotsForWindow) {
+        const canAddLeft =
+          left >= showTopNCount && !windowAddedIndices.has(left);
+        const canAddRight =
+          right < totalDriversInGroup && !windowAddedIndices.has(right);
+
+        if (canAddLeft) {
+          windowDrivers.unshift(sortedDriversInGroup[left]);
+          windowAddedIndices.add(left);
+          currentWindowSize++;
+          left--;
+        } else if (canAddRight) {
+          windowDrivers.push(sortedDriversInGroup[right]);
+          windowAddedIndices.add(right);
+          currentWindowSize++;
+          right++;
+        } else {
+          break; // No more drivers to add
+        }
+      }
+
+      // Combine top N and window drivers
+      finalDrivers = [...topNDrivers, ...windowDrivers];
+      finalDrivers.sort((a, b) => a.classPosition - b.classPosition);
+
+      // Determine separator visibility based on discontinuity
+      const lastTopNPosition =
+        topNDrivers.length > 0
+          ? topNDrivers[topNDrivers.length - 1].classPosition
+          : -1;
+      const firstWindowPosition =
+        windowDrivers.length > 0 ? windowDrivers[0].classPosition : -1;
+      showSeparator =
+        topNDrivers.length > 0 &&
+        windowDrivers.length > 0 &&
+        firstWindowPosition !== lastTopNPosition + 1;
+
+      if (showSeparator) {
+        separatorIndex = showTopNCount - 1; // The gap appears after the last top N driver
       }
     }
 
-    // 4. Fill any remaining space with other drivers from the sorted list
-    for (
-      let i = 0;
-      i < sortedDriversInGroup.length &&
-      finalDrivers.length < maxDriversToRender;
-      i++
-    ) {
-      if (!finalAddedIndices.has(i)) {
-        finalDrivers.push(sortedDriversInGroup[i]); // Use sortedDriversInGroup here
-        finalAddedIndices.add(i);
-      }
-    }
-
-    // Sort the final list by class position and trim to exact maxDriversToRender
-    finalDrivers.sort((a, b) => a.classPosition - b.classPosition);
-    return finalDrivers.slice(0, maxDriversToRender);
-  }, [sortedDriversInGroup, maxDriversToRender]);
+    return {
+      drivers: finalDrivers.slice(0, maxDriversToRender),
+      showSeparator,
+      separatorIndex,
+    };
+  }, [sortedDriversInGroup, maxDriversToRender, showTopNCount]);
 
   const groupHeaderColor =
     groupColor ||
@@ -153,6 +217,12 @@ export const Group = ({
   if (maxDriversToRender === 0) {
     return null; // Do not render the group if no drivers are to be shown
   }
+
+  const {
+    drivers: driversToDisplay,
+    showSeparator: shouldRenderSeparator,
+    separatorIndex,
+  } = driversToDisplayResult;
 
   return (
     <div
@@ -188,17 +258,7 @@ export const Group = ({
           </b>
         </span>
       </div>
-      <div
-        className={styles.separator}
-        style={
-          {
-            "--group-separator-color": groupSeparatorColor,
-            "--group-separator-height": `${groupSeparatorHeightPx}px`,
-            "--group-separator-margin-vertical": `${groupSeparatorMarginVerticalPx}px`,
-          } as React.CSSProperties
-        }
-      />
-      {driversToDisplay.map((driver) => (
+      {driversToDisplay.map((driver, index) => (
         <DriverRow
           key={driver.carIdx}
           driver={driver}
@@ -217,6 +277,11 @@ export const Group = ({
           driverRowMinHeightPx={driverRowMinHeightPx}
           driverRowPaddingVerticalPx={driverRowPaddingVerticalPx}
           driverRowBorderBottomPx={driverRowBorderBottomPx}
+          style={
+            shouldRenderSeparator && index === separatorIndex + 1
+              ? { marginTop: `${gapBetweenTopNAndRestPx}px` }
+              : undefined
+          }
         />
       ))}
     </div>

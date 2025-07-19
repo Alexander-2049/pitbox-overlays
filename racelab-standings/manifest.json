@@ -207,30 +207,6 @@
       "requiredFields": []
     },
     {
-      "id": "groupSeparatorHeightPx",
-      "type": "slider",
-      "name": "Group Separator Height (px)",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "unit": "number",
-      "group": "Layout",
-      "defaultValue": 1,
-      "requiredFields": []
-    },
-    {
-      "id": "groupSeparatorMarginVerticalPx",
-      "type": "slider",
-      "name": "Group Separator Margin Vertical (px)",
-      "min": 0,
-      "max": 10,
-      "step": 1,
-      "unit": "number",
-      "group": "Layout",
-      "defaultValue": 4,
-      "requiredFields": []
-    },
-    {
       "id": "driverRowMinHeightPx",
       "type": "slider",
       "name": "Driver Row Min Height (px)",
@@ -300,6 +276,18 @@
       "unit": "number",
       "group": "Layout",
       "defaultValue": 2,
+      "requiredFields": []
+    },
+    {
+      "id": "gapBetweenTopNAndRestPx",
+      "type": "slider",
+      "name": "Gap Between Top N and Rest (px)",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "number",
+      "group": "Layout",
+      "defaultValue": 10,
       "requiredFields": []
     }
   ],

@@ -29,14 +29,15 @@ const Standings = ({
   headerHeightPx = 40,
   groupHeaderMinHeightPx = 20,
   groupHeaderMarginBottomPx = 8,
-  groupSeparatorHeightPx = 1,
-  groupSeparatorMarginVerticalPx = 4,
+  // Removed groupSeparatorHeightPx = 1,
+  // Removed groupSeparatorMarginVerticalPx = 4,
   driverRowMinHeightPx = 25, // User's request for default row height
   driverRowPaddingVerticalPx = 3,
   driverRowBorderBottomPx = 1,
   groupContainerPaddingPx = 10,
   driversSectionPaddingPx = 10,
   groupGapPx = 2,
+  gapBetweenTopNAndRestPx = 10, // New prop with default
 }: StandingsProps) => {
   const driversSectionRef = useRef<HTMLDivElement>(null);
   const [availableDriversHeight, setAvailableDriversHeight] = useState(0);
@@ -143,12 +144,6 @@ const Standings = ({
     [groupHeaderMinHeightPx, groupHeaderMarginBottomPx]
   );
 
-  // Calculate the total effective height of a group separator
-  const effectiveGroupSeparatorHeight = useMemo(
-    () => groupSeparatorHeightPx + 2 * groupSeparatorMarginVerticalPx,
-    [groupSeparatorHeightPx, groupSeparatorMarginVerticalPx]
-  );
-
   // Calculate the total effective vertical padding for a group container
   const effectiveGroupContainerPaddingVertical = useMemo(
     () => 2 * groupContainerPaddingPx,
@@ -157,29 +152,64 @@ const Standings = ({
 
   // Helper to calculate total height of a group based on number of drivers
   const calculateGroupRenderHeight = useMemo(() => {
-    return (numDrivers: number) => {
+    return (
+      numDrivers: number,
+      isSelectedGroupTruncatedWithSeparator: boolean
+    ) => {
       if (numDrivers === 0) return 0;
-      return (
+      let height =
         effectiveGroupHeaderHeight +
-        effectiveGroupSeparatorHeight +
         effectiveGroupContainerPaddingVertical +
-        numDrivers * effectiveDriverRowHeight
-      );
+        numDrivers * effectiveDriverRowHeight;
+      if (isSelectedGroupTruncatedWithSeparator) {
+        height += gapBetweenTopNAndRestPx; // Use the new gap prop here
+      }
+      return height;
     };
   }, [
     effectiveGroupHeaderHeight,
-    effectiveGroupSeparatorHeight,
     effectiveGroupContainerPaddingVertical,
     effectiveDriverRowHeight,
+    gapBetweenTopNAndRestPx, // Dependency added
   ]);
 
   // Helper to calculate total height of all groups based on currentDriversPerGroup map
-  const calculateCurrentTotalHeight = (map: Map<number, number>) => {
+  const calculateCurrentTotalHeight = (
+    map: Map<number, number>,
+    selectedGroupId: number | undefined
+  ) => {
     let height = 0;
     let renderedGroupCount = 0;
-    map.forEach((numDrivers) => {
+    map.forEach((numDrivers, carClassId) => {
       if (numDrivers > 0) {
-        height += calculateGroupRenderHeight(numDrivers);
+        const groupDrivers =
+          groupedDrivers.find(([id]) => id === carClassId)?.[1] || [];
+        const selectedDriverInGroup = groupDrivers.find((d) => d.isSelected);
+        const selectedIndexInGroup = selectedDriverInGroup
+          ? groupDrivers.indexOf(selectedDriverInGroup)
+          : -1;
+
+        // A separator is likely if it's the selected group, truncated, selected driver is outside top N,
+        // and there's space for a window (i.e., more drivers than just showTopNCount).
+        // This is an approximation for layout calculation. The actual rendering in Group.tsx
+        // will be precise based on discontinuity.
+        let isSelectedGroupTruncatedWithSeparator = false;
+        if (
+          carClassId === selectedGroupId &&
+          selectedDriverInGroup &&
+          numDrivers > showTopNCount
+        ) {
+          // If the selected driver is outside top N, and we are rendering more than top N drivers in this group,
+          // it implies a window, and thus a potential separator for height calculation.
+          if (selectedIndexInGroup >= showTopNCount) {
+            isSelectedGroupTruncatedWithSeparator = true;
+          }
+        }
+
+        height += calculateGroupRenderHeight(
+          numDrivers,
+          isSelectedGroupTruncatedWithSeparator
+        );
         renderedGroupCount++;
       }
     });
@@ -215,7 +245,8 @@ const Standings = ({
       });
 
       let currentTotalHeight = calculateCurrentTotalHeight(
-        currentDriversPerGroup
+        currentDriversPerGroup,
+        undefined
       );
 
       // Phase 2: Iteratively shrink groups (from showTopNCount down to 1)
@@ -245,7 +276,8 @@ const Standings = ({
           const oldNumDrivers = currentDriversPerGroup.get(carClassId)!;
           currentDriversPerGroup.set(carClassId, oldNumDrivers - 1);
           currentTotalHeight = calculateCurrentTotalHeight(
-            currentDriversPerGroup
+            currentDriversPerGroup,
+            undefined
           );
           changedThisIteration = true;
           if (currentTotalHeight <= currentRemainingHeight) break; // Stop if it fits
@@ -260,7 +292,8 @@ const Standings = ({
           if ((currentDriversPerGroup.get(carClassId) || 0) > 0) {
             currentDriversPerGroup.set(carClassId, 0); // Hide this group
             currentTotalHeight = calculateCurrentTotalHeight(
-              currentDriversPerGroup
+              currentDriversPerGroup,
+              undefined
             );
             if (currentTotalHeight <= currentRemainingHeight) break; // Stop if it fits
           }
@@ -283,7 +316,8 @@ const Standings = ({
       });
 
       const currentTotalHeight = calculateCurrentTotalHeight(
-        currentDriversPerGroup
+        currentDriversPerGroup,
+        selectedGroupId
       );
 
       // If there's enough space for showTopNCount in all groups (including selected)
@@ -293,6 +327,19 @@ const Standings = ({
         let remainingSpace = currentRemainingHeight - currentTotalHeight;
         let currentSelectedCount =
           currentDriversPerGroup.get(selectedGroupId!) || 0;
+
+        // Approximate if a separator would be needed if we expand
+        const selectedDriverIndex =
+          selectedGroupDrivers.indexOf(selectedDriver);
+        const wouldNeedSeparator =
+          selectedDriverIndex >= showTopNCount &&
+          currentSelectedCount >= showTopNCount;
+
+        if (wouldNeedSeparator) {
+          // If we are going to show more than showTopNCount and selected driver is outside top N,
+          // we need to account for the separator height.
+          remainingSpace -= gapBetweenTopNAndRestPx;
+        }
 
         while (
           remainingSpace >= effectiveDriverRowHeight && // Check if there's space for at least one more driver row
@@ -313,8 +360,15 @@ const Standings = ({
         );
 
         // Calculate height of selected group (with its target drivers)
+        const selectedDriverIndex =
+          selectedGroupDrivers.indexOf(selectedDriver);
+        const isSelectedGroupTruncatedWithSeparator =
+          selectedDriverIndex >= showTopNCount &&
+          currentDriversPerGroup.get(selectedGroupId!)! > showTopNCount;
+
         const heightOfSelectedGroup = calculateGroupRenderHeight(
-          currentDriversPerGroup.get(selectedGroupId!)!
+          currentDriversPerGroup.get(selectedGroupId!)!,
+          isSelectedGroupTruncatedWithSeparator
         );
 
         // Calculate remaining height for all other groups combined, including their gaps
@@ -333,8 +387,10 @@ const Standings = ({
           otherGroups.forEach(([carClassId]) => {
             const numDrivers = currentDriversPerGroup.get(carClassId) || 0;
             if (numDrivers > 0) {
-              currentHeightOfOtherGroups +=
-                calculateGroupRenderHeight(numDrivers);
+              currentHeightOfOtherGroups += calculateGroupRenderHeight(
+                numDrivers,
+                false
+              ); // Other groups don't have special separator logic
               renderedOtherGroupCount++;
             }
           });
@@ -376,8 +432,10 @@ const Standings = ({
               const tempNumDrivers =
                 currentDriversPerGroup.get(tempCarClassId) || 0;
               if (tempNumDrivers > 0) {
-                tempHeightOfOtherGroups +=
-                  calculateGroupRenderHeight(tempNumDrivers);
+                tempHeightOfOtherGroups += calculateGroupRenderHeight(
+                  tempNumDrivers,
+                  false
+                );
                 tempRenderedOtherGroupCount++;
               }
             });
@@ -396,22 +454,27 @@ const Standings = ({
 
         // Phase 3: If still too tall (after shrinking others to 1), hide non-selected groups
         let finalTotalHeight = calculateCurrentTotalHeight(
-          currentDriversPerGroup
+          currentDriversPerGroup,
+          selectedGroupId
         );
         if (finalTotalHeight > currentRemainingHeight) {
           otherGroups.forEach(([carClassId]) =>
             currentDriversPerGroup.set(carClassId, 0)
           ); // Hide all other groups
           finalTotalHeight = calculateCurrentTotalHeight(
-            currentDriversPerGroup
+            currentDriversPerGroup,
+            selectedGroupId
           ); // Recalculate total height (now only selected group)
 
           // Phase 4: If still too tall (meaning selected group itself is too big), or if space opened up, adjust selected group
           // This part is for the selected group to take up as much space as possible *after* other groups are handled.
           let currentSelectedCount =
             currentDriversPerGroup.get(selectedGroupId!) || 0;
-          const heightOfCurrentSelected =
-            calculateGroupRenderHeight(currentSelectedCount);
+          const heightOfCurrentSelected = calculateGroupRenderHeight(
+            currentSelectedCount,
+            selectedDriverIndex >= showTopNCount &&
+              currentSelectedCount > showTopNCount
+          );
           let remainingSpaceForSelectedExpansion =
             currentRemainingHeight - heightOfCurrentSelected;
 
@@ -454,8 +517,8 @@ const Standings = ({
     calculateGroupRenderHeight,
     effectiveDriverRowHeight,
     effectiveGroupHeaderHeight,
-    effectiveGroupSeparatorHeight,
     effectiveGroupContainerPaddingVertical,
+    gapBetweenTopNAndRestPx, // Added dependency
   ]);
 
   const themeClass = isLightTheme ? styles.lightTheme : "";
@@ -518,12 +581,14 @@ const Standings = ({
             groupBackgroundColor={themeColors.groupBg}
             groupHeaderMinHeightPx={groupHeaderMinHeightPx}
             groupHeaderMarginBottomPx={groupHeaderMarginBottomPx}
-            groupSeparatorHeightPx={groupSeparatorHeightPx}
-            groupSeparatorMarginVerticalPx={groupSeparatorMarginVerticalPx}
+            // Removed groupSeparatorHeightPx={groupSeparatorHeightPx}
+            // Removed groupSeparatorMarginVerticalPx={groupSeparatorMarginVerticalPx}
             driverRowMinHeightPx={driverRowMinHeightPx}
             driverRowPaddingVerticalPx={driverRowPaddingVerticalPx}
             driverRowBorderBottomPx={driverRowBorderBottomPx}
             groupContainerPaddingPx={groupContainerPaddingPx}
+            showTopNCount={showTopNCount} // Pass showTopNCount to Group
+            gapBetweenTopNAndRestPx={gapBetweenTopNAndRestPx} // Pass new prop to Group
           />
         ))}
       </div>

@@ -397,12 +397,8 @@ const meta: Meta<typeof Standings> = {
     groupHeaderMarginBottomPx: {
       control: { type: "range", min: 0, max: 20, step: 1 },
     },
-    groupSeparatorHeightPx: {
-      control: { type: "range", min: 1, max: 10, step: 1 },
-    },
-    groupSeparatorMarginVerticalPx: {
-      control: { type: "range", min: 0, max: 10, step: 1 },
-    },
+    // Removed groupSeparatorHeightPx
+    // Removed groupSeparatorMarginVerticalPx
     driverRowMinHeightPx: {
       control: { type: "range", min: 15, max: 60, step: 1 },
     },
@@ -419,6 +415,9 @@ const meta: Meta<typeof Standings> = {
       control: { type: "range", min: 0, max: 30, step: 1 },
     },
     groupGapPx: { control: { type: "range", min: 0, max: 20, step: 1 } },
+    gapBetweenTopNAndRestPx: {
+      control: { type: "range", min: 0, max: 30, step: 1 },
+    }, // New argType
   },
 };
 
@@ -431,6 +430,7 @@ export const Default: Story = {
     drivers: exampleDrivers,
     session: sessionExample,
     // Uses new default values for sizes
+    gapBetweenTopNAndRestPx: 10, // Explicitly set default for story
   },
 };
 
@@ -556,8 +556,8 @@ export const CompactView: Story = {
     headerHeightPx: 30,
     groupHeaderMinHeightPx: 15,
     groupHeaderMarginBottomPx: 4,
-    groupSeparatorHeightPx: 1,
-    groupSeparatorMarginVerticalPx: 2,
+    // Removed groupSeparatorHeightPx
+    // Removed groupSeparatorMarginVerticalPx
     driverRowMinHeightPx: 18, // Very compact row height
     driverRowPaddingVerticalPx: 1,
     driverRowBorderBottomPx: 0, // No border for super compact
@@ -565,6 +565,7 @@ export const CompactView: Story = {
     driversSectionPaddingPx: 5,
     groupGapPx: 1,
     showTopNCount: 2, // Show fewer top drivers
+    gapBetweenTopNAndRestPx: 5, // Compact gap
   },
 };
 
@@ -582,13 +583,14 @@ export const LargeFontsAndRows: Story = {
     headerHeightPx: 60,
     groupHeaderMinHeightPx: 30,
     groupHeaderMarginBottomPx: 12,
-    groupSeparatorHeightPx: 2,
-    groupSeparatorMarginVerticalPx: 8,
+    // Removed groupSeparatorHeightPx
+    // Removed groupSeparatorMarginVerticalPx
     driverRowMinHeightPx: 40, // Larger row height
     driverRowPaddingVerticalPx: 8,
     driverRowBorderBottomPx: 2,
     groupContainerPaddingPx: 15,
     driversSectionPaddingPx: 20,
     groupGapPx: 10,
+    gapBetweenTopNAndRestPx: 20, // Larger gap
   },
 };

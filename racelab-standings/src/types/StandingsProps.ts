@@ -23,12 +23,13 @@ export interface StandingsProps {
   headerHeightPx?: number;
   groupHeaderMinHeightPx?: number;
   groupHeaderMarginBottomPx?: number;
-  groupSeparatorHeightPx?: number;
-  groupSeparatorMarginVerticalPx?: number;
+  // Removed groupSeparatorHeightPx?: number
+  // Removed groupSeparatorMarginVerticalPx?: number
   driverRowMinHeightPx?: number;
   driverRowPaddingVerticalPx?: number;
   driverRowBorderBottomPx?: number;
   groupContainerPaddingPx?: number;
   driversSectionPaddingPx?: number;
   groupGapPx?: number;
+  gapBetweenTopNAndRestPx?: number; // New prop
 }

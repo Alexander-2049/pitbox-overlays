@@ -4,9 +4,9 @@ import { formatFastestLap } from "../../utils/formatters";
 import { CarNumber } from "../car-number/car-number";
 import styles from "./driver-row.module.css";
 
-interface Props {
+export interface Props {
   driver: Driver;
-  isFastestInGroup?: boolean;
+  isFastestInGroup: boolean;
   driverNameFontSize?: number;
   positionFontSize?: number;
   carNumberFontSize?: number;
@@ -15,9 +15,10 @@ interface Props {
   selectedDriverHighlightColor?: string;
   fastestLapHighlightColor?: string;
   isLightTheme?: boolean;
-  driverRowMinHeightPx?: number; // New prop for min-height
-  driverRowPaddingVerticalPx?: number; // New prop for vertical padding
-  driverRowBorderBottomPx?: number; // New prop for border bottom
+  driverRowMinHeightPx?: number;
+  driverRowPaddingVerticalPx?: number;
+  driverRowBorderBottomPx?: number;
+  style?: React.CSSProperties;
 }
 
 export const DriverRow = ({

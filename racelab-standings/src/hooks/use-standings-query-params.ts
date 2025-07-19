@@ -17,14 +17,15 @@ const DEFAULT_STANDINGS_PROPS = {
   headerHeightPx: 40,
   groupHeaderMinHeightPx: 20,
   groupHeaderMarginBottomPx: 8,
-  groupSeparatorHeightPx: 1,
-  groupSeparatorMarginVerticalPx: 4,
+  // Removed groupSeparatorHeightPx: 1,
+  // Removed groupSeparatorMarginVerticalPx: 4,
   driverRowMinHeightPx: 25,
   driverRowPaddingVerticalPx: 3,
   driverRowBorderBottomPx: 1,
   groupContainerPaddingPx: 10,
   driversSectionPaddingPx: 10,
   groupGapPx: 2,
+  gapBetweenTopNAndRestPx: 10, // Default value for the new gap
   // For colors, the component handles defaults based on theme,
   // but for query params, we expect hex strings if provided.
   // If not provided, the component's internal logic will apply its defaults.
@@ -45,11 +46,11 @@ export const useStandingsQueryParams = (): StandingsQueryParams => {
     return new URLSearchParams(window.location.search);
   }, []);
 
-  const getParam = <T>(
+  const getParam = (
     key: string,
-    parser: (value: string) => T | undefined,
-    defaultValue: T
-  ): T => {
+    parser: (value: string) => any | undefined,
+    defaultValue: any
+  ): any => {
     const value = queryParams.get(key);
     if (value === null) {
       return defaultValue;
@@ -59,7 +60,7 @@ export const useStandingsQueryParams = (): StandingsQueryParams => {
   };
 
   const parseNumber = (value: string): number | undefined => {
-    const num = parseFloat(value);
+    const num = Number.parseFloat(value);
     return isNaN(num) ? undefined : num;
   };
 
@@ -164,16 +165,16 @@ export const useStandingsQueryParams = (): StandingsQueryParams => {
       parseNumber,
       DEFAULT_STANDINGS_PROPS.groupHeaderMarginBottomPx
     ),
-    groupSeparatorHeightPx: getParam(
-      "groupSeparatorHeightPx",
-      parseNumber,
-      DEFAULT_STANDINGS_PROPS.groupSeparatorHeightPx
-    ),
-    groupSeparatorMarginVerticalPx: getParam(
-      "groupSeparatorMarginVerticalPx",
-      parseNumber,
-      DEFAULT_STANDINGS_PROPS.groupSeparatorMarginVerticalPx
-    ),
+    // Removed groupSeparatorHeightPx: getParam(
+    //   "groupSeparatorHeightPx",
+    //   parseNumber,
+    //   DEFAULT_STANDINGS_PROPS.groupSeparatorHeightPx,
+    // ),
+    // Removed groupSeparatorMarginVerticalPx: getParam(
+    //   "groupSeparatorMarginVerticalPx",
+    //   parseNumber,
+    //   DEFAULT_STANDINGS_PROPS.groupSeparatorMarginVerticalPx,
+    // ),
     driverRowMinHeightPx: getParam(
       "driverRowMinHeightPx",
       parseNumber,
@@ -203,6 +204,11 @@ export const useStandingsQueryParams = (): StandingsQueryParams => {
       "groupGapPx",
       parseNumber,
       DEFAULT_STANDINGS_PROPS.groupGapPx
+    ),
+    gapBetweenTopNAndRestPx: getParam(
+      "gapBetweenTopNAndRestPx",
+      parseNumber,
+      DEFAULT_STANDINGS_PROPS.gapBetweenTopNAndRestPx
     ),
   };
 };

@@ -46,8 +46,5 @@
   color: #666; /* Light theme driver count color */
 }
 
-.separator {
-  height: var(--group-separator-height); /* Controlled by prop */
-  background-color: var(--group-separator-color, rgba(109, 109, 109, 0.5)); /* Default dark theme separator */
-  margin: var(--group-separator-margin-vertical) 0; /* Controlled by prop */
-}
+/* Removed .separator styles */
+/* Removed .gapSeparator styles */
