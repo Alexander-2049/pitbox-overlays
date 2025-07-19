@@ -1,6 +1,6 @@
 import type { StandingsProps } from "../types/StandingsProps";
 import { Header } from "./header";
-import styles from "./Standings.module.css";
+import styles from "./standings.module.css";
 import { useRef, useState, useEffect, useMemo } from "react";
 import type { Driver } from "../types/Driver";
 import { Group } from "./drivers/group";
