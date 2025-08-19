@@ -1,0 +1,27 @@
+{
+  "title": "PaceTab: Input Telemetry",
+  "description": "",
+  "tags": [
+    "Telemetry"
+  ],
+  "dimentions": {
+    "defaultWidth": 300,
+    "defaultHeight": 400,
+    "minWidth": 200,
+    "minHeight": 300,
+    "maxWidth": 800,
+    "maxHeight": 800
+  },
+  "settings": [],
+  "requiredFields": [
+    "realtime.throttle",
+    "realtime.brake"
+  ],
+  "optionalFields": [
+    "realtime.steeringAnglePct",
+    "realtime.gear",
+    "realtime.speedKph",
+    "realtime.speedMph",
+    "realtime.absActive"
+  ]
+}
