@@ -184,7 +184,7 @@ export const InputTraces = ({
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       style={{ display: "block" }}
-    ></svg>
+    />
   );
 };
 
