@@ -1,7 +1,6 @@
-import { InputTraces } from "./components/input-traces";
 import "./index.css";
-import InputBars from "./components/input-bars";
 import useGameData from "./hooks/useGameData";
+import Inputs from "./components/inputs";
 
 const App = () => {
   const { data } = useGameData();
@@ -17,20 +16,7 @@ const App = () => {
         backgroundColor: "rgba(100, 100, 200, 0.15)",
       }}
     >
-      <InputTraces
-        input={data?.realtime}
-        settings={{
-          includeThrottle: true,
-          includeBrake: true,
-          includeClutch: true,
-          includeSteeringAngle: true,
-        }}
-        historySeconds={7}
-      />
-      <InputBars
-        input={data?.realtime}
-        barsOrder={["throttle", "brake", "abs"]}
-      />
+      <Inputs input={data?.realtime} traceSettings={{}} />
     </div>
   );
 };

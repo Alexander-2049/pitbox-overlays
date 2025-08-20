@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import AbsLightIcon from "../assets/abs-light-icon";
-
+// input-bars.tsx
 const DEFAULT_COLORS = {
-  throttle: "#22c55e", // green
-  brake: "#ef4444", // red
-  brakeAbs: "#facc15", // yellow
-  clutch: "#38bdf8", // light blue
-  steering: "#1e3a8a", // dark blue
+  throttle: "#22c55e",
+  brake: "#ef4444",
+  clutch: "#38bdf8",
+  steering: "#1e3a8a",
+  brakeAbs: "#fefefe",
 };
 
 export interface InputBarsProps {
@@ -15,9 +13,8 @@ export interface InputBarsProps {
     throttle?: number;
     clutch?: number;
     steeringAnglePct?: number;
-    isAbsActive?: boolean;
   };
-  barsOrder?: Array<"throttle" | "brake" | "clutch" | "abs">;
+  barsOrder?: Array<"throttle" | "brake" | "clutch">;
   colors?: Partial<typeof DEFAULT_COLORS>;
 }
 
@@ -28,7 +25,6 @@ interface InputBarProps {
 
 const InputBar = ({ value, color }: InputBarProps) => {
   const pct = Math.round(value * 100);
-
   return (
     <div
       style={{
@@ -39,7 +35,6 @@ const InputBar = ({ value, color }: InputBarProps) => {
         height: "100%",
       }}
     >
-      {/* Top label */}
       <div
         style={{
           width: "32px",
@@ -55,8 +50,6 @@ const InputBar = ({ value, color }: InputBarProps) => {
       >
         {pct}
       </div>
-
-      {/* Bar container that takes up remaining space */}
       <div
         style={{
           flex: 1,
@@ -79,29 +72,14 @@ const InputBar = ({ value, color }: InputBarProps) => {
   );
 };
 
-const InputBars = ({
+const InputBars: React.FC<InputBarsProps> = ({
   input,
-  barsOrder = ["clutch", "throttle", "brake", "abs"],
+  barsOrder = ["clutch", "throttle", "brake"],
   colors = {},
-}: InputBarsProps) => {
+}) => {
   const mergedColors = { ...DEFAULT_COLORS, ...colors };
-  const [absFlash, setAbsFlash] = useState(false);
 
-  useEffect(() => {
-    if (input?.isAbsActive) {
-      const interval = setInterval(() => {
-        setAbsFlash((prev) => !prev);
-      }, 60);
-      return () => clearInterval(interval);
-    } else {
-      setAbsFlash(false);
-    }
-  }, [input?.isAbsActive]);
-
-  const renderBar = (
-    type: "throttle" | "brake" | "clutch" | "abs",
-    index: number
-  ) => {
+  const renderBar = (type: "throttle" | "brake" | "clutch", index: number) => {
     switch (type) {
       case "throttle":
         return (
@@ -126,39 +104,6 @@ const InputBars = ({
             value={input?.clutch || 0}
             color={mergedColors.clutch}
           />
-        );
-      case "abs":
-        // Use the ABS icon instead of text, keep flashing and 1:1 aspect ratio
-        // Import at top: import AbsLightIcon from "../assets/abs-light-icon";
-        return (
-          <div
-            key={`abs-${index}`}
-            style={{
-              aspectRatio: "1/1",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "12%",
-              boxSizing: "border-box",
-            }}
-          >
-            <AbsLightIcon
-              width="100%"
-              height="100%"
-              color={
-                input?.isAbsActive
-                  ? absFlash
-                    ? "#bdbdbd"
-                    : mergedColors.brakeAbs
-                  : "#bdbdbd"
-              }
-              style={{
-                display: "block",
-                transition: "color 0.1s",
-              }}
-            />
-          </div>
         );
     }
   };

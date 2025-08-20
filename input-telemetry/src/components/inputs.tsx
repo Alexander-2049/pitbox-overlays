@@ -1,30 +1,31 @@
 import React from "react";
 import InputBars, { InputBarsProps } from "./input-bars";
 import { InputTraces, InputTraceProps } from "./input-traces";
+import AbsIndicator from "./abs-indicator";
 
 type Orientation = "vertical" | "horizontal";
 
 export interface InputsProps {
-  input: InputBarsProps["input"];
+  input?: InputBarsProps["input"] & { isAbsActive?: boolean };
   barsOrder?: InputBarsProps["barsOrder"];
   barColors?: InputBarsProps["colors"];
   traceSettings: InputTraceProps["settings"];
   traceColors?: InputTraceProps["colors"];
   traceHistorySeconds?: InputTraceProps["historySeconds"];
   orientation?: Orientation;
-  tracesFirst?: boolean;
+  elementsOrder?: Array<"traces" | "abs" | "bars">;
   style?: React.CSSProperties;
 }
 
 const Inputs: React.FC<InputsProps> = ({
   input,
-  barsOrder,
+  barsOrder = ["throttle", "brake"],
   barColors,
   traceSettings,
   traceColors,
   traceHistorySeconds,
-  orientation = "vertical",
-  tracesFirst = true, // default
+  orientation = "horizontal",
+  elementsOrder = ["traces", "bars"],
   style,
 }) => {
   const isVertical = orientation === "vertical";
@@ -38,6 +39,7 @@ const Inputs: React.FC<InputsProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        gap: "4px",
       }}
     >
       <InputBars input={input} barsOrder={barsOrder} colors={barColors} />
@@ -52,7 +54,7 @@ const Inputs: React.FC<InputsProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        flexGrow: "1",
+        flexGrow: 1,
       }}
     >
       <InputTraces
@@ -64,28 +66,31 @@ const Inputs: React.FC<InputsProps> = ({
     </div>
   );
 
+  const abs = (
+    <AbsIndicator
+      color={barColors?.brakeAbs || "#facc15"}
+      isActive={!!input?.isAbsActive}
+    />
+  );
+
+  const elementsMap: Record<"traces" | "abs" | "bars", React.ReactNode> = {
+    traces,
+    abs,
+    bars,
+  };
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: isVertical ? "column" : "row",
-        width: isVertical ? "100%" : "100%",
-        height: isVertical ? "100%" : "100%",
+        width: "100%",
+        height: "100%",
         gap: "8px",
         ...style,
       }}
     >
-      {tracesFirst ? (
-        <>
-          {traces}
-          {bars}
-        </>
-      ) : (
-        <>
-          {bars}
-          {traces}
-        </>
-      )}
+      {elementsOrder.map((key) => elementsMap[key])}
     </div>
   );
 };

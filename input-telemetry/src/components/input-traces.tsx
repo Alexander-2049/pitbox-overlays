@@ -36,8 +36,12 @@ export const InputTraces = ({
   colors = {},
 }: InputTraceProps) => {
   const mergedColors = { ...DEFAULT_COLORS, ...colors };
-  const { includeThrottle, includeBrake, includeClutch, includeSteeringAngle } =
-    settings;
+  const {
+    includeThrottle = true,
+    includeBrake = true,
+    includeClutch = false,
+    includeSteeringAngle = false,
+  } = settings;
 
   const svgRef = useRef<SVGSVGElement>(null);
   const { width, height } = { width: 400, height: 100 };
