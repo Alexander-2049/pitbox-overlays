@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import AbsLightIcon from "../assets/abs-light-icon";
 
 const DEFAULT_COLORS = {
   throttle: "#22c55e", // green
@@ -90,7 +91,7 @@ const InputBars = ({
     if (input.isAbsActive) {
       const interval = setInterval(() => {
         setAbsFlash((prev) => !prev);
-      }, 85);
+      }, 60);
       return () => clearInterval(interval);
     } else {
       setAbsFlash(false);
@@ -127,32 +128,36 @@ const InputBars = ({
           />
         );
       case "abs":
+        // Use the ABS icon instead of text, keep flashing and 1:1 aspect ratio
+        // Import at top: import AbsLightIcon from "../assets/abs-light-icon";
         return (
           <div
             key={`abs-${index}`}
-            ref={(el) => {
-              if (el) {
-                const width = el.offsetWidth;
-                if (el.style.fontSize !== `${width / 2.7}px`) {
-                  el.style.fontSize = `${width / 2.7}px`;
-                }
-              }
-            }}
             style={{
-              borderRadius: "50%",
               aspectRatio: "1/1",
               height: "100%",
-              backgroundColor: input.isAbsActive
-                ? absFlash
-                  ? "gray"
-                  : mergedColors.brakeAbs
-                : "gray",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              padding: "12%",
+              boxSizing: "border-box",
             }}
           >
-            ABS
+            <AbsLightIcon
+              width="100%"
+              height="100%"
+              color={
+                input.isAbsActive
+                  ? absFlash
+                    ? "#bdbdbd"
+                    : mergedColors.brakeAbs
+                  : "#bdbdbd"
+              }
+              style={{
+                display: "block",
+                transition: "color 0.1s",
+              }}
+            />
           </div>
         );
     }

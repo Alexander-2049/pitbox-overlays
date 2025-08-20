@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { InputTraces } from "./components/input-traces";
 import "./index.css";
 import InputBars from "./components/input-bars";
+import useWebSocket from "./hooks/useWebSocket";
 
 const App = () => {
   const [input, setInput] = useState({
@@ -31,6 +32,30 @@ const App = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const arr = useMemo(
+    () => [
+      "realtime.throttle",
+      "realtime.brake",
+      "realtime.steeringAnglePct",
+      "realtime.gear",
+      "realtime.speedKph",
+      "realtime.speedMph",
+      "realtime.displayUnits",
+      "realtime.absActive",
+    ],
+    []
+  );
+  const { data, error } = useWebSocket(arr);
+  useEffect(() => {
+    if (
+      typeof data["realtime.throttle"] === "number" &&
+      data["realtime.throttle"] > 0.4 &&
+      data["realtime.throttle"] < 0.46
+    ) {
+      console.log(data);
+    }
+  }, [data]);
 
   return (
     <div
