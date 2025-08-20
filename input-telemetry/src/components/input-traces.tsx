@@ -188,6 +188,22 @@ export const InputTraces = ({
   );
 };
 
+// helper: pad values with a left-edge point
+function padWithLeftEdgePoint(
+  values: TimedValue[],
+  now: number,
+  historySeconds: number
+): TimedValue[] {
+  if (values.length === 0) return values;
+
+  const first = values[0];
+  const leftTime = now - historySeconds;
+
+  if (first.t <= leftTime) return values;
+
+  return [{ t: leftTime, v: first.v }, ...values];
+}
+
 function drawGraph(
   svgElement: SVGSVGElement | null,
   traces: { values: TimedValue[]; color: string; type: string }[],
@@ -217,10 +233,13 @@ function drawGraph(
   drawYAxis(svg, yScale, width);
 
   traces.forEach(({ values, color, type }) => {
+    const paddedValues = padWithLeftEdgePoint(values, now, historySeconds);
+
     if (type === "brake" && absArray.length > 0) {
-      drawBrakeWithABS(svg, values, absArray, xScale, yScale, colors);
+      const paddedAbs = padWithLeftEdgePoint(absArray, now, historySeconds);
+      drawBrakeWithABS(svg, paddedValues, paddedAbs, xScale, yScale, colors);
     } else {
-      drawLine(svg, values, xScale, yScale, color);
+      drawLine(svg, paddedValues, xScale, yScale, color);
     }
   });
 }
@@ -279,12 +298,10 @@ function drawBrakeWithABS(
 ) {
   if (brakeValues.length === 0) return;
 
-  // Build segments based on ABS activity
   let currentSegment: TimedValue[] = [];
   let currentColor = colors.brake;
 
   const getAbsActive = (t: number) => {
-    // find nearest ABS value
     const closest = absArray.reduce(
       (prev, curr) =>
         Math.abs(curr.t - t) < Math.abs(prev.t - t) ? curr : prev,
@@ -299,10 +316,8 @@ function drawBrakeWithABS(
     const color = isActive ? colors.brakeAbs : colors.brake;
 
     if (color !== currentColor && currentSegment.length > 0) {
-      // draw previous segment including the transition point
       currentSegment.push(point);
       drawLine(svg, currentSegment, xScale, yScale, currentColor);
-      // start new segment with the transition point
       currentSegment = [point];
       currentColor = color;
     } else {
