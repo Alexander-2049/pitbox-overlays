@@ -3,10 +3,8 @@ import Inputs, { InputsProps } from "./inputs";
 import { InputBarsProps } from "./input-bars";
 import { InputTraceProps } from "./input-traces";
 
-// filepath: c:/Users/Alexander/Desktop/Development/pitbox-overlays/input-telemetry/src/components/inputs.stories.tsx
-
 // Mock input data
-const mockInput: InputBarsProps["input"] = {
+const mockInput: InputBarsProps["input"] & { isAbsActive?: boolean } = {
   throttle: 0.7,
   brake: 0.2,
   clutch: 0.1,
@@ -18,7 +16,6 @@ const mockBarsOrder: InputBarsProps["barsOrder"] = [
   "throttle",
   "brake",
   "clutch",
-  "abs",
 ];
 const mockBarColors = {
   throttle: "#4caf50",
@@ -52,8 +49,8 @@ const meta: Meta<InputsProps> = {
     traceColors: mockTraceColors,
     traceHistorySeconds: 5,
     orientation: "vertical",
+    elementsOrder: ["traces", "bars"], // required/optional param from InputsProps
     style: { width: 400, height: 300, border: "1px solid #ccc" },
-    tracesFirst: true,
   },
 };
 
@@ -67,5 +64,6 @@ export const Horizontal: Story = {
   args: {
     orientation: "horizontal",
     style: { width: 800, height: 150, border: "1px solid #ccc" },
+    elementsOrder: ["traces", "bars"], // ensure consistent with InputsProps
   },
 };
