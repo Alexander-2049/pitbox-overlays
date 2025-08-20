@@ -10,7 +10,7 @@ const DEFAULT_COLORS = {
 };
 
 export interface InputBarsProps {
-  input: {
+  input?: {
     brake?: number;
     throttle?: number;
     clutch?: number;
@@ -88,7 +88,7 @@ const InputBars = ({
   const [absFlash, setAbsFlash] = useState(false);
 
   useEffect(() => {
-    if (input.isAbsActive) {
+    if (input?.isAbsActive) {
       const interval = setInterval(() => {
         setAbsFlash((prev) => !prev);
       }, 60);
@@ -96,7 +96,7 @@ const InputBars = ({
     } else {
       setAbsFlash(false);
     }
-  }, [input.isAbsActive]);
+  }, [input?.isAbsActive]);
 
   const renderBar = (
     type: "throttle" | "brake" | "clutch" | "abs",
@@ -107,7 +107,7 @@ const InputBars = ({
         return (
           <InputBar
             key={`throttle-${index}`}
-            value={input.throttle || 0}
+            value={input?.throttle || 0}
             color={mergedColors.throttle}
           />
         );
@@ -115,7 +115,7 @@ const InputBars = ({
         return (
           <InputBar
             key={`brake-${index}`}
-            value={input.brake || 0}
+            value={input?.brake || 0}
             color={mergedColors.brake}
           />
         );
@@ -123,7 +123,7 @@ const InputBars = ({
         return (
           <InputBar
             key={`clutch-${index}`}
-            value={input.clutch || 0}
+            value={input?.clutch || 0}
             color={mergedColors.clutch}
           />
         );
@@ -147,7 +147,7 @@ const InputBars = ({
               width="100%"
               height="100%"
               color={
-                input.isAbsActive
+                input?.isAbsActive
                   ? absFlash
                     ? "#bdbdbd"
                     : mergedColors.brakeAbs

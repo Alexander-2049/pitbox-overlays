@@ -10,7 +10,7 @@ const DEFAULT_COLORS = {
 };
 
 export interface InputTraceProps {
-  input: {
+  input?: {
     brake?: number;
     throttle?: number;
     clutch?: number;
@@ -59,12 +59,12 @@ export const InputTraces = ({
 
   useEffect(() => {
     lastInputRef.current = {
-      throttle: input.throttle ?? lastInputRef.current.throttle,
-      brake: input.brake ?? lastInputRef.current.brake,
-      clutch: input.clutch ?? lastInputRef.current.clutch,
+      throttle: input?.throttle ?? lastInputRef.current.throttle,
+      brake: input?.brake ?? lastInputRef.current.brake,
+      clutch: input?.clutch ?? lastInputRef.current.clutch,
       steeringAnglePct:
-        input.steeringAnglePct ?? lastInputRef.current.steeringAnglePct,
-      isAbsActive: input.isAbsActive ?? lastInputRef.current.isAbsActive,
+        input?.steeringAnglePct ?? lastInputRef.current.steeringAnglePct,
+      isAbsActive: input?.isAbsActive ?? lastInputRef.current.isAbsActive,
     };
   }, [input]);
 
