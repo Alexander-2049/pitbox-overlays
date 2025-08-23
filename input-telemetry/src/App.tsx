@@ -15,7 +15,7 @@ const App = () => {
         flexDirection: "row",
       }}
     >
-      <Inputs input={data?.realtime} traceSettings={{}} />
+      <Inputs input={data?.realtime} />
     </div>
   );
 };
