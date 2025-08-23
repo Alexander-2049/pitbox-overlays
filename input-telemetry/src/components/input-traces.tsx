@@ -280,6 +280,7 @@ function drawYAxis(
     .selectAll("line")
     .attr("x2", width)
     .attr("stroke", "#666")
+    .attr("vector-effect", "non-scaling-stroke")
     .attr("stroke-dasharray", "2,2");
 
   svg.select(".domain").remove();
@@ -304,6 +305,7 @@ function drawLine(
     .attr("fill", "none")
     .attr("stroke", color)
     .attr("stroke-width", 3)
+    .attr("vector-effect", "non-scaling-stroke")
     .attr("d", line);
 }
 
