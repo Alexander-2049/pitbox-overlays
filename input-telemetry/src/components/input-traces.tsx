@@ -17,7 +17,7 @@ export interface InputTraceProps {
     steeringAnglePct?: number;
     isAbsActive?: boolean;
   };
-  settings: {
+  settings?: {
     includeThrottle?: boolean;
     includeBrake?: boolean;
     includeClutch?: boolean;
@@ -50,7 +50,7 @@ export const InputTraces = ({
     includeBrake = true,
     includeClutch = false,
     includeSteeringAngle = false,
-  } = settings;
+  } = settings || {};
 
   const svgRef = useRef<SVGSVGElement>(null);
   const { width, height } = { width: 400, height: 100 };

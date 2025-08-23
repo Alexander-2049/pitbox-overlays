@@ -9,7 +9,7 @@ export interface InputsProps {
   input?: InputBarsProps["input"] & { isAbsActive?: boolean };
   barsOrder?: InputBarsProps["barsOrder"];
   barColors?: InputBarsProps["colors"];
-  traceSettings: InputTraceProps["settings"];
+  traceSettings?: InputTraceProps["settings"];
   traceColors?: InputTraceProps["colors"];
   traceHistorySeconds?: InputTraceProps["historySeconds"];
   orientation?: Orientation;
