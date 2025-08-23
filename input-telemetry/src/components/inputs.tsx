@@ -87,6 +87,7 @@ const Inputs: React.FC<InputsProps> = ({
         width: "100%",
         height: "100%",
         gap: "8px",
+        background: "rgba(0,0,0,0.9)",
         ...style,
       }}
     >

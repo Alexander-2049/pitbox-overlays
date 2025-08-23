@@ -29,6 +29,15 @@ export interface InputTraceProps {
 
 type TimedValue = { t: number; v: number };
 
+function convertSteeringAngle(steeringAnglePct: number, minMaxPct: number) {
+  // Map steeringAnglePct to [0, 1] range, centered at 0.5
+  // minMaxPct is the maximum absolute value for full lock (e.g. 0.3)
+  // 0 => 0.5, minMaxPct => 1, -minMaxPct => 0, linear in between
+  if (minMaxPct === 0) return 0.5;
+  const val = 0.5 + 0.5 * (steeringAnglePct / minMaxPct);
+  return Math.max(0, Math.min(1, val));
+}
+
 export const InputTraces = ({
   input,
   settings,
@@ -57,7 +66,7 @@ export const InputTraces = ({
     throttle: 0,
     brake: 0,
     clutch: 0,
-    steeringAnglePct: 0,
+    steeringAnglePct: 0.5,
     isAbsActive: false,
   });
 
@@ -67,7 +76,8 @@ export const InputTraces = ({
       brake: input?.brake ?? lastInputRef.current.brake,
       clutch: input?.clutch ?? lastInputRef.current.clutch,
       steeringAnglePct:
-        input?.steeringAnglePct ?? lastInputRef.current.steeringAnglePct,
+        input?.steeringAnglePct ??
+        convertSteeringAngle(lastInputRef.current.steeringAnglePct, 0.3),
       isAbsActive: input?.isAbsActive ?? lastInputRef.current.isAbsActive,
     };
   }, [input]);
@@ -109,7 +119,13 @@ export const InputTraces = ({
         setSteeringArray((arr) => {
           const updated = [
             ...arr,
-            { t: now, v: lastInputRef.current.steeringAnglePct },
+            {
+              t: now,
+              v: convertSteeringAngle(
+                lastInputRef.current.steeringAnglePct,
+                0.3
+              ),
+            },
           ];
           return updated.filter((p) => now - p.t <= historySeconds);
         });

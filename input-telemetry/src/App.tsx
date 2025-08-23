@@ -13,7 +13,6 @@ const App = () => {
         display: "flex",
         justifyContent: "space-between",
         flexDirection: "row",
-        backgroundColor: "rgba(100, 100, 200, 0.15)",
       }}
     >
       <Inputs input={data?.realtime} traceSettings={{}} />

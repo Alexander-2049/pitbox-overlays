@@ -33,6 +33,7 @@ const InputBar = ({ value, color }: InputBarProps) => {
         alignItems: "center",
         width: "20px",
         height: "100%",
+        padding: "4px",
       }}
     >
       <div
@@ -45,7 +46,11 @@ const InputBar = ({ value, color }: InputBarProps) => {
           fontWeight: 600,
           lineHeight: "20px",
           marginBottom: "2px",
+          marginTop: "3px",
           userSelect: "none",
+          color: "#fff",
+          textShadow: "2px 2px 4px #919191ff",
+          fontFamily: "sans-serif",
         }}
       >
         {pct}

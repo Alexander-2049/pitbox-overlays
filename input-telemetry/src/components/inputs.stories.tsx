@@ -8,20 +8,15 @@ const mockInput: InputBarsProps["input"] & { isAbsActive?: boolean } = {
   throttle: 0.7,
   brake: 0.2,
   clutch: 0.1,
-  steeringAnglePct: 0.5,
+  steeringAnglePct: 0,
   isAbsActive: false,
 };
 
-const mockBarsOrder: InputBarsProps["barsOrder"] = [
-  "throttle",
-  "brake",
-  "clutch",
-];
-const mockBarColors = {
+const mockBarsOrder: InputBarsProps["barsOrder"] = ["throttle", "brake"];
+const mockBarColors: InputBarsProps["colors"] = {
   throttle: "#4caf50",
   brake: "#f44336",
   clutch: "#2196f3",
-  steering: "#ff9800",
 };
 
 const mockTraceSettings: InputTraceProps["settings"] = {
@@ -31,11 +26,11 @@ const mockTraceSettings: InputTraceProps["settings"] = {
   includeSteeringAngle: true,
 };
 
-const mockTraceColors = {
+const mockTraceColors: InputTraceProps["colors"] = {
   throttle: "#4caf50",
   brake: "#f44336",
   clutch: "#2196f3",
-  steering: "#ff9800",
+  steering: "#1e3a8a",
 };
 
 const meta: Meta<InputsProps> = {
@@ -48,9 +43,9 @@ const meta: Meta<InputsProps> = {
     traceSettings: mockTraceSettings,
     traceColors: mockTraceColors,
     traceHistorySeconds: 5,
-    orientation: "vertical",
+    orientation: "horizontal",
     elementsOrder: ["traces", "bars"], // required/optional param from InputsProps
-    style: { width: 400, height: 300, border: "1px solid #ccc" },
+    style: { width: 380, height: 120, border: "1px solid #ccc" },
   },
 };
 
