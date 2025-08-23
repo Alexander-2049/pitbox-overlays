@@ -66,7 +66,7 @@ export const InputTraces = ({
     throttle: 0,
     brake: 0,
     clutch: 0,
-    steeringAnglePct: 0.5,
+    steeringAnglePct: 0,
     isAbsActive: false,
   });
 

@@ -45,6 +45,7 @@ function parseHexColor(value: string | null, defaultValue: string): string {
 }
 
 function parseNumber(value: string | null, defaultValue: number): number {
+  if (value === null) return defaultValue;
   const num = Number(value);
   return isNaN(num) ? defaultValue : num;
 }
