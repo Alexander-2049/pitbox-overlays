@@ -26,6 +26,11 @@ const App = () => {
         traceColors={parameters.traceColors}
         traceHistorySeconds={parameters.traceHistorySeconds}
         traceSettings={parameters.traceSettings}
+        visible={{
+          absVisible: parameters.absVisible,
+          barsVisible: parameters.barsVisible,
+          tracesVisibile: parameters.tracesVisibile,
+        }}
       />
     </div>
   );

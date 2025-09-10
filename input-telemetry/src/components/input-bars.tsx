@@ -14,7 +14,13 @@ export interface InputBarsProps {
     clutch?: number;
     steeringAnglePct?: number;
   };
-  barsOrder?: Array<"throttle" | "brake" | "clutch">;
+  settings?: {
+    includeThrottle?: boolean;
+    includeBrake?: boolean;
+    includeClutch?: boolean;
+    includeSteeringAngle?: boolean;
+  };
+  barsOrder?: Array<"throttle.bar" | "brake.bar" | "clutch.bar">;
   colors?: Partial<typeof DEFAULT_COLORS>;
 }
 
@@ -79,14 +85,19 @@ const InputBar = ({ value, color }: InputBarProps) => {
 
 const InputBars: React.FC<InputBarsProps> = ({
   input,
-  barsOrder = ["clutch", "throttle", "brake"],
+  settings = {},
+  barsOrder = ["clutch.bar", "throttle.bar", "brake.bar"],
   colors = {},
 }) => {
   const mergedColors = { ...DEFAULT_COLORS, ...colors };
 
-  const renderBar = (type: "throttle" | "brake" | "clutch", index: number) => {
+  const renderBar = (
+    type: "throttle.bar" | "brake.bar" | "clutch.bar",
+    index: number
+  ) => {
     switch (type) {
-      case "throttle":
+      case "throttle.bar":
+        if (!settings.includeThrottle) return null;
         return (
           <InputBar
             key={`throttle-${index}`}
@@ -94,7 +105,8 @@ const InputBars: React.FC<InputBarsProps> = ({
             color={mergedColors.throttle}
           />
         );
-      case "brake":
+      case "brake.bar":
+        if (!settings.includeBrake) return null;
         return (
           <InputBar
             key={`brake-${index}`}
@@ -102,7 +114,8 @@ const InputBars: React.FC<InputBarsProps> = ({
             color={mergedColors.brake}
           />
         );
-      case "clutch":
+      case "clutch.bar":
+        if (!settings.includeClutch) return null;
         return (
           <InputBar
             key={`clutch-${index}`}

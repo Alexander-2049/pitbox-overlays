@@ -14,19 +14,29 @@ export interface InputsProps {
   traceHistorySeconds?: InputTraceProps["historySeconds"];
   orientation?: Orientation;
   elementsOrder?: Array<"traces" | "abs" | "bars">;
+  visible?: {
+    tracesVisibile?: boolean;
+    barsVisible?: boolean;
+    absVisible?: boolean;
+  };
   style?: React.CSSProperties;
 }
 
 const Inputs: React.FC<InputsProps> = ({
   input,
-  barsOrder = ["throttle", "brake"],
+  barsOrder = ["throttle.bar", "brake.bar", "clutch.bar"],
   barColors,
   traceSettings,
   traceColors,
   traceHistorySeconds,
   orientation = "horizontal",
-  elementsOrder = ["traces", "bars"],
+  elementsOrder = ["traces", "bars", "abs"],
   style,
+  visible = {
+    absVisible: false,
+    barsVisible: true,
+    tracesVisibile: true,
+  },
 }) => {
   const isVertical = orientation === "vertical";
 
@@ -91,7 +101,19 @@ const Inputs: React.FC<InputsProps> = ({
         ...style,
       }}
     >
-      {elementsOrder.map((key) => elementsMap[key])}
+      {elementsOrder
+        .filter((element) => {
+          if (element === "abs") {
+            return visible.absVisible;
+          }
+          if (element === "bars") {
+            return visible.barsVisible;
+          }
+          if (element === "traces") {
+            return visible.tracesVisibile;
+          }
+        })
+        .map((key) => elementsMap[key])}
     </div>
   );
 };

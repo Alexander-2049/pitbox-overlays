@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-type BarType = "throttle" | "brake" | "clutch";
+type BarType = "throttle.bar" | "brake.bar" | "clutch.bar";
 type Orientation = "horizontal" | "vertical";
 type ElementType = "traces" | "abs" | "bars";
 
@@ -28,9 +28,17 @@ interface Parameters {
   traceHistorySeconds: number;
   orientation: Orientation;
   elementsOrder: ElementType[];
+  tracesVisibile: boolean;
+  barsVisible: boolean;
+  absVisible: boolean;
+  barSettings: {
+    throttleBarVisible: boolean;
+    brakeBarVisible: boolean;
+    clutchBarVisible: boolean;
+  };
 }
 
-const allowedBars: BarType[] = ["throttle", "brake", "clutch"];
+const allowedBars: BarType[] = ["throttle.bar", "brake.bar", "clutch.bar"];
 const allowedElements: ElementType[] = ["traces", "abs", "bars"];
 
 function parseBoolean(value: string | null, defaultValue: boolean): boolean {
@@ -73,10 +81,9 @@ export function useParameters(): Parameters {
     const params = new URLSearchParams(window.location.search);
 
     return {
-      barsOrder: parseArray(params.get("barsOrder"), allowedBars, [
-        "throttle",
-        "brake",
-        "clutch",
+      barsOrder: parseArray(params.get("bars.order"), allowedBars, [
+        "throttle.bar",
+        "brake.bar",
       ]),
       barColors: {
         throttle: parseHexColor(params.get("barColors.throttle"), "#22c55e"),
@@ -109,11 +116,23 @@ export function useParameters(): Parameters {
         brakeAbs: parseHexColor(params.get("traceColors.brakeAbs"), "#fefefe"),
         steering: parseHexColor(params.get("traceColors.steering"), "#1e3a8a"),
       },
+      tracesVisibile: parseBoolean(params.get("traces.visible"), true),
+      barsVisible: parseBoolean(params.get("bars.visible"), true),
+      absVisible: parseBoolean(params.get("abs.visible"), false),
+      barSettings: {
+        throttleBarVisible: parseBoolean(
+          params.get("throttle.bar.visible"),
+          true
+        ),
+        brakeBarVisible: parseBoolean(params.get("brake.bar.visible"), true),
+        clutchBarVisible: parseBoolean(params.get("clutch.bar.visible"), true),
+      },
       traceHistorySeconds: parseNumber(params.get("traceHistorySeconds"), 7),
       orientation: parseOrientation(params.get("orientation"), "horizontal"),
-      elementsOrder: parseArray(params.get("elementsOrder"), allowedElements, [
+      elementsOrder: parseArray(params.get("elements.order"), allowedElements, [
         "traces",
         "bars",
+        "abs",
       ]),
     };
   }, []);
