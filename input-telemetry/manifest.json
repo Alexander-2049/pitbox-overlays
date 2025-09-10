@@ -1,6 +1,6 @@
 {
-  "title": "PaceTab: Input Telemetry",
-  "description": "",
+  "title": "Pitbox: Input Telemetry",
+  "description": "Displays live input telemetry (throttle, brake, clutch, steering, ABS traces).",
   "tags": [
     "Telemetry"
   ],
@@ -8,11 +8,10 @@
     "defaultWidth": 800,
     "defaultHeight": 150,
     "minWidth": 200,
-    "minHeight": 300,
-    "maxWidth": 800,
+    "minHeight": 50,
+    "maxWidth": 1600,
     "maxHeight": 800
   },
-  "settings": [],
   "requiredFields": [
     "realtime.throttle",
     "realtime.brake"
@@ -22,6 +21,258 @@
     "realtime.gear",
     "realtime.speedKph",
     "realtime.speedMph",
-    "realtime.absActive"
+    "realtime.displayUnits",
+    "realtime.absActive",
+    "realtime.rpm",
+    "realtime.clutch"
+  ],
+  "pages": [
+    {
+      "title": "General",
+      "icon": "settings",
+      "groups": [
+        {
+          "id": "layout",
+          "title": "Layout",
+          "type": "default",
+          "settings": [
+            {
+              "id": "orientation",
+              "type": "select",
+              "name": "Orientation",
+              "defaultValue": "horizontal",
+              "selectList": [
+                {
+                  "id": "horizontal",
+                  "value": "Horizontal"
+                },
+                {
+                  "id": "vertical",
+                  "value": "Vertical"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "elements.order",
+          "title": "Elements order",
+          "type": "reorderable",
+          "elements": [
+            {
+              "id": "traces",
+              "title": "Traces",
+              "visibility": {
+                "id": "traces.visible",
+                "defaultValue": true
+              }
+            },
+            {
+              "id": "bars",
+              "title": "Bars",
+              "visibility": {
+                "id": "bars.visible",
+                "defaultValue": true
+              }
+            },
+            {
+              "id": "abs",
+              "title": "ABS",
+              "visibility": {
+                "id": "abs.visible",
+                "defaultValue": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Bars",
+      "icon": "bar-chart",
+      "groups": [
+        {
+          "id": "bars.order",
+          "title": "Bars Order & Colors",
+          "type": "reorderable",
+          "elements": [
+            {
+              "id": "throttle.bar",
+              "title": "Throttle bar",
+              "visibility": {
+                "id": "throttle.bar.visible",
+                "defaultValue": true
+              },
+              "settings": [
+                {
+                  "id": "barColors.throttle",
+                  "type": "color",
+                  "name": "Throttle bar color",
+                  "defaultValue": "#22c55e"
+                }
+              ],
+              "requiredFields": [
+                "realtime.throttle"
+              ]
+            },
+            {
+              "id": "brake.bar",
+              "title": "Brake bar",
+              "visibility": {
+                "id": "brake.bar.visible",
+                "defaultValue": true
+              },
+              "settings": [
+                {
+                  "id": "barColors.brake",
+                  "type": "color",
+                  "name": "Brake bar color",
+                  "defaultValue": "#ef4444"
+                },
+                {
+                  "id": "barColors.brakeAbs",
+                  "type": "color",
+                  "name": "Brake ABS bar color",
+                  "defaultValue": "#fefefe"
+                }
+              ],
+              "requiredFields": [
+                "realtime.brake"
+              ]
+            },
+            {
+              "id": "brake.clutch",
+              "title": "Clutch bar",
+              "visibility": {
+                "id": "clutch.bar.visible",
+                "defaultValue": false
+              },
+              "settings": [
+                {
+                  "id": "barColors.clutch",
+                  "type": "color",
+                  "name": "Clutch bar color",
+                  "defaultValue": "#38bdf8"
+                }
+              ],
+              "requiredFields": [
+                "realtime.clutch"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Traces",
+      "icon": "pipe",
+      "groups": [
+        {
+          "id": "trace.settings",
+          "title": "Trace Settings",
+          "type": "default",
+          "settings": [
+            {
+              "id": "traceSettings.includeThrottle",
+              "type": "toggle",
+              "name": "Include throttle trace",
+              "defaultValue": true,
+              "requiredFields": [
+                "realtime.throttle"
+              ]
+            },
+            {
+              "id": "traceSettings.includeBrake",
+              "type": "toggle",
+              "name": "Include brake trace",
+              "defaultValue": true,
+              "requiredFields": [
+                "realtime.brake"
+              ]
+            },
+            {
+              "id": "traceSettings.includeClutch",
+              "type": "toggle",
+              "name": "Include clutch trace",
+              "defaultValue": false,
+              "requiredFields": [
+                "realtime.clutch"
+              ]
+            },
+            {
+              "id": "traceSettings.includeSteeringAngle",
+              "type": "toggle",
+              "name": "Include steering angle trace",
+              "defaultValue": true,
+              "requiredFields": [
+                "realtime.steeringAnglePct"
+              ]
+            },
+            {
+              "id": "traceHistorySeconds",
+              "type": "slider",
+              "name": "Trace history duration (seconds)",
+              "min": 1,
+              "max": 30,
+              "step": 1,
+              "unit": "number",
+              "defaultValue": 7
+            }
+          ]
+        },
+        {
+          "id": "trace.colors",
+          "title": "Trace Colors",
+          "type": "default",
+          "settings": [
+            {
+              "id": "traceColors.throttle",
+              "type": "color",
+              "name": "Throttle trace color",
+              "defaultValue": "#22c55e",
+              "requiredFields": [
+                "realtime.throttle"
+              ]
+            },
+            {
+              "id": "traceColors.brake",
+              "type": "color",
+              "name": "Brake trace color",
+              "defaultValue": "#ef4444",
+              "requiredFields": [
+                "realtime.brake"
+              ]
+            },
+            {
+              "id": "traceColors.clutch",
+              "type": "color",
+              "name": "Clutch trace color",
+              "defaultValue": "#38bdf8",
+              "requiredFields": [
+                "realtime.clutch"
+              ]
+            },
+            {
+              "id": "traceColors.brakeAbs",
+              "type": "color",
+              "name": "Brake ABS trace color",
+              "defaultValue": "#fefefe",
+              "requiredFields": [
+                "realtime.brake"
+              ]
+            },
+            {
+              "id": "traceColors.steering",
+              "type": "color",
+              "name": "Steering angle trace color",
+              "defaultValue": "#1e3a8a",
+              "requiredFields": [
+                "realtime.steeringAnglePct"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   ]
 }
