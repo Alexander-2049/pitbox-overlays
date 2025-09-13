@@ -131,7 +131,9 @@ const Inputs: React.FC<InputsProps> = ({
             return visible.tracesVisibile;
           }
         })
-        .map((key) => elementsMap[key])}
+        .map((key) => (
+          <React.Fragment key={key}>{elementsMap[key]}</React.Fragment>
+        ))}
     </div>
   );
 };
