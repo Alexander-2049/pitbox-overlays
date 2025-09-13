@@ -12,7 +12,10 @@ const mockInput: InputBarsProps["input"] & { isAbsActive?: boolean } = {
   isAbsActive: false,
 };
 
-const mockBarsOrder: InputBarsProps["barsOrder"] = ["throttle", "brake"];
+const mockBarsOrder: InputBarsProps["barsOrder"] = [
+  "throttle.bar",
+  "brake.bar",
+];
 const mockBarColors: InputBarsProps["colors"] = {
   throttle: "#4caf50",
   brake: "#f44336",
