@@ -141,7 +141,7 @@
               ]
             },
             {
-              "id": "brake.clutch",
+              "id": "clutch.bar",
               "title": "Clutch bar",
               "visibility": {
                 "id": "clutch.bar.visible",

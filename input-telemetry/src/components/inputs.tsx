@@ -20,6 +20,11 @@ export interface InputsProps {
     absVisible?: boolean;
   };
   style?: React.CSSProperties;
+  barSettings?: {
+    throttleBarVisible: boolean;
+    brakeBarVisible: boolean;
+    clutchBarVisible: boolean;
+  };
 }
 
 const Inputs: React.FC<InputsProps> = ({
@@ -37,6 +42,10 @@ const Inputs: React.FC<InputsProps> = ({
     barsVisible: true,
     tracesVisibile: true,
   },
+  barSettings = {
+    throttleBarVisible: true,
+    brakeBarVisible: true,
+  },
 }) => {
   const isVertical = orientation === "vertical";
 
@@ -52,7 +61,16 @@ const Inputs: React.FC<InputsProps> = ({
         gap: "4px",
       }}
     >
-      <InputBars input={input} barsOrder={barsOrder} colors={barColors} />
+      <InputBars
+        input={input}
+        barsOrder={barsOrder}
+        colors={barColors}
+        settings={{
+          includeThrottle: barSettings.throttleBarVisible,
+          includeBrake: barSettings.brakeBarVisible,
+          includeClutch: barSettings.clutchBarVisible,
+        }}
+      />
     </div>
   );
 

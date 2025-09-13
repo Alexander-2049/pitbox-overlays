@@ -31,6 +31,7 @@ const App = () => {
           barsVisible: parameters.barsVisible,
           tracesVisibile: parameters.tracesVisibile,
         }}
+        barSettings={parameters.barSettings}
       />
     </div>
   );

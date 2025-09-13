@@ -18,7 +18,6 @@ export interface InputBarsProps {
     includeThrottle?: boolean;
     includeBrake?: boolean;
     includeClutch?: boolean;
-    includeSteeringAngle?: boolean;
   };
   barsOrder?: Array<"throttle.bar" | "brake.bar" | "clutch.bar">;
   colors?: Partial<typeof DEFAULT_COLORS>;
@@ -85,7 +84,11 @@ const InputBar = ({ value, color }: InputBarProps) => {
 
 const InputBars: React.FC<InputBarsProps> = ({
   input,
-  settings = {},
+  settings = {
+    includeBrake: true,
+    includeThrottle: true,
+    includeClutch: false,
+  },
   barsOrder = ["clutch.bar", "throttle.bar", "brake.bar"],
   colors = {},
 }) => {
