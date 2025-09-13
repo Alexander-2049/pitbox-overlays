@@ -84,6 +84,7 @@ export function useParameters(): Parameters {
       barsOrder: parseArray(params.get("bars.order"), allowedBars, [
         "throttle.bar",
         "brake.bar",
+        "clutch.bar",
       ]),
       barColors: {
         throttle: parseHexColor(params.get("barColors.throttle"), "#22c55e"),
