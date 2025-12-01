@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  color: #fff; /* Default text color */
+}
+
+#root {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent; /* Handled by Standings component */
+}
