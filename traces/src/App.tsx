@@ -20,8 +20,9 @@ const App = () => {
       <Inputs
         input={data?.realtime}
         colors={parameters.colors}
+        backgroundOpacity={parameters.backgroundOpacity}
         traceHistorySeconds={parameters.traceHistorySeconds}
-        traceSettings={parameters.traceVisibility}
+        traceVisibility={parameters.traceVisibility}
       />
     </div>
   );

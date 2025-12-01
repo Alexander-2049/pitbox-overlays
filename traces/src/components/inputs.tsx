@@ -1,5 +1,6 @@
 import React from "react";
 import { InputTraces, InputTraceProps } from "./input-traces";
+import { opacityToHex } from "../utils/opacityToHex";
 
 export interface InputsProps {
   input?: {
@@ -9,7 +10,7 @@ export interface InputsProps {
     steeringAnglePct?: number;
     isAbsActive?: boolean;
   };
-  traceSettings?: InputTraceProps["settings"];
+  traceVisibility?: InputTraceProps["settings"];
   colors?: InputTraceProps["colors"];
   traceHistorySeconds?: InputTraceProps["historySeconds"];
   visible?: {
@@ -17,19 +18,16 @@ export interface InputsProps {
     barsVisible?: boolean;
     absVisible?: boolean;
   };
+  backgroundOpacity?: number;
   style?: React.CSSProperties;
-  barSettings?: {
-    throttleBarVisible: boolean;
-    brakeBarVisible: boolean;
-    clutchBarVisible: boolean;
-  };
 }
 
 const Inputs: React.FC<InputsProps> = ({
   input,
-  traceSettings,
+  traceVisibility: traceSettings,
   colors,
   traceHistorySeconds,
+  backgroundOpacity,
   style,
 }) => {
   return (
@@ -37,7 +35,9 @@ const Inputs: React.FC<InputsProps> = ({
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: colors?.background,
+        backgroundColor:
+          (colors?.background || "#202c44") +
+          (backgroundOpacity ? opacityToHex(backgroundOpacity) : "FF"),
         ...style,
       }}
     >

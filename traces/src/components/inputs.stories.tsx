@@ -32,9 +32,10 @@ const meta: Meta<InputsProps> = {
   component: Inputs,
   args: {
     input: mockInput,
-    traceSettings: mockTraceSettings,
+    traceVisibility: mockTraceSettings,
     colors: mockTraceColors,
     traceHistorySeconds: 5,
+    backgroundOpacity: 0.75,
     style: { width: 380, height: 120, border: "1px solid #ccc" },
   },
 };
