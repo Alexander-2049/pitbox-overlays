@@ -10,7 +10,7 @@ export interface InputsProps {
     isAbsActive?: boolean;
   };
   traceSettings?: InputTraceProps["settings"];
-  traceColors?: InputTraceProps["colors"];
+  colors?: InputTraceProps["colors"];
   traceHistorySeconds?: InputTraceProps["historySeconds"];
   visible?: {
     tracesVisibile?: boolean;
@@ -28,7 +28,7 @@ export interface InputsProps {
 const Inputs: React.FC<InputsProps> = ({
   input,
   traceSettings,
-  traceColors,
+  colors,
   traceHistorySeconds,
   style,
 }) => {
@@ -37,14 +37,14 @@ const Inputs: React.FC<InputsProps> = ({
       style={{
         width: "100%",
         height: "100%",
-        background: "rgba(0,0,0,0.9)",
+        backgroundColor: colors?.background,
         ...style,
       }}
     >
       <InputTraces
         inputValues={input}
         settings={traceSettings}
-        colors={traceColors}
+        colors={colors}
         historySeconds={traceHistorySeconds}
       />
     </div>

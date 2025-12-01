@@ -7,6 +7,7 @@ const DEFAULT_COLORS = {
   brakeAbs: "#facc15", // yellow
   clutch: "#38bdf8", // light blue
   steering: "#1e3a8a", // dark blue
+  background: "#202c44", // almost black + blueish
 };
 
 export interface InputTraceProps {
@@ -239,7 +240,7 @@ function drawGraph(
   const svg = d3.select(svgElement);
   svg.selectAll("*").remove();
 
-  const scaleMargin = 0.05;
+  const scaleMargin = 0.008;
   const xScale = d3
     .scaleLinear()
     .domain([now - historySeconds, now])

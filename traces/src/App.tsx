@@ -19,7 +19,7 @@ const App = () => {
     >
       <Inputs
         input={data?.realtime}
-        traceColors={parameters.traceColors}
+        colors={parameters.colors}
         traceHistorySeconds={parameters.traceHistorySeconds}
         traceSettings={parameters.traceVisibility}
       />

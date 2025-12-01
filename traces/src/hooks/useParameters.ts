@@ -7,7 +7,7 @@ interface Parameters {
     includeClutch: boolean;
     includeSteeringAngle: boolean;
   };
-  traceColors: {
+  colors: {
     throttle: string;
     brake: string;
     clutch: string;
@@ -15,6 +15,7 @@ interface Parameters {
     steering: string;
   };
   traceHistorySeconds: number;
+  backgroundOpacity: number;
 }
 
 function parseBoolean(value: string | null, defaultValue: boolean): boolean {
@@ -57,14 +58,16 @@ export function useParameters(): Parameters {
           true
         ),
       },
-      traceColors: {
-        throttle: parseHexColor(params.get("traceColors.throttle"), "#22c55e"),
-        brake: parseHexColor(params.get("traceColors.brake"), "#ef4444"),
-        clutch: parseHexColor(params.get("traceColors.clutch"), "#38bdf8"),
-        brakeAbs: parseHexColor(params.get("traceColors.brakeAbs"), "#fefefe"),
-        steering: parseHexColor(params.get("traceColors.steering"), "#1e3a8a"),
+      colors: {
+        throttle: parseHexColor(params.get("colors.throttle"), "#22c55e"),
+        brake: parseHexColor(params.get("colors.brake"), "#ef4444"),
+        clutch: parseHexColor(params.get("colors.clutch"), "#38bdf8"),
+        brakeAbs: parseHexColor(params.get("colors.brakeAbs"), "#fefefe"),
+        steering: parseHexColor(params.get("colors.steering"), "#1e3a8a"),
+        background: parseHexColor(params.get("colors.background"), "#202c44"),
       },
       traceHistorySeconds: parseNumber(params.get("traceHistorySeconds"), 7),
+      backgroundOpacity: parseNumber(params.get("backgroundOpacity"), 0.7),
     };
   }, []);
 }

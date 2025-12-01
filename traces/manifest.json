@@ -1,9 +1,7 @@
 {
   "title": "Redan: Traces",
   "description": "Displays live traces (throttle, brake, clutch, steering, ABS).",
-  "tags": [
-    "Telemetry"
-  ],
+  "tags": ["Telemetry"],
   "dimentions": {
     "defaultWidth": 800,
     "defaultHeight": 150,
@@ -12,152 +10,13 @@
     "maxWidth": 1600,
     "maxHeight": 800
   },
-  "requiredFields": [
-    "realtime.throttle",
-    "realtime.brake"
-  ],
+  "requiredFields": ["realtime.throttle", "realtime.brake"],
   "optionalFields": [
     "realtime.steeringAnglePct",
     "realtime.absActive",
     "realtime.clutch"
   ],
   "pages": [
-    {
-      "title": "General",
-      "icon": "settings",
-      "groups": [
-        {
-          "id": "layout",
-          "title": "Layout",
-          "type": "default",
-          "settings": [
-            {
-              "id": "orientation",
-              "type": "select",
-              "name": "Orientation",
-              "defaultValue": "horizontal",
-              "selectList": [
-                {
-                  "id": "horizontal",
-                  "value": "Horizontal"
-                },
-                {
-                  "id": "vertical",
-                  "value": "Vertical"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "elements.order",
-          "title": "Elements order",
-          "type": "reorderable",
-          "elements": [
-            {
-              "id": "traces",
-              "title": "Traces",
-              "visibility": {
-                "id": "traces.visible",
-                "defaultValue": true
-              }
-            },
-            {
-              "id": "bars",
-              "title": "Bars",
-              "visibility": {
-                "id": "bars.visible",
-                "defaultValue": true
-              }
-            },
-            {
-              "id": "abs",
-              "title": "ABS",
-              "visibility": {
-                "id": "abs.visible",
-                "defaultValue": false
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Bars",
-      "icon": "bar-chart",
-      "groups": [
-        {
-          "id": "bars.order",
-          "title": "Bars Order & Colors",
-          "type": "reorderable",
-          "elements": [
-            {
-              "id": "throttle.bar",
-              "title": "Throttle bar",
-              "visibility": {
-                "id": "throttle.bar.visible",
-                "defaultValue": true
-              },
-              "settings": [
-                {
-                  "id": "barColors.throttle",
-                  "type": "color",
-                  "name": "Throttle bar color",
-                  "defaultValue": "#22c55e"
-                }
-              ],
-              "requiredFields": [
-                "realtime.throttle"
-              ]
-            },
-            {
-              "id": "brake.bar",
-              "title": "Brake bar",
-              "visibility": {
-                "id": "brake.bar.visible",
-                "defaultValue": true
-              },
-              "settings": [
-                {
-                  "id": "barColors.brake",
-                  "type": "color",
-                  "name": "Brake bar color",
-                  "defaultValue": "#ef4444"
-                },
-                {
-                  "id": "barColors.brakeAbs",
-                  "type": "color",
-                  "name": "Brake ABS bar color",
-                  "defaultValue": "#fefefe"
-                }
-              ],
-              "requiredFields": [
-                "realtime.brake"
-              ]
-            },
-            {
-              "id": "clutch.bar",
-              "title": "Clutch bar",
-              "visibility": {
-                "id": "clutch.bar.visible",
-                "defaultValue": false
-              },
-              "settings": [
-                {
-                  "id": "barColors.clutch",
-                  "type": "color",
-                  "name": "Clutch bar color",
-                  "defaultValue": "#38bdf8"
-                }
-              ],
-              "requiredFields": [
-                "realtime.clutch"
-              ]
-            }
-          ]
-        }
-      ]
-    },
     {
       "title": "Traces",
       "icon": "pipe",
@@ -171,37 +30,25 @@
               "id": "traceSettings.includeThrottle",
               "type": "toggle",
               "name": "Include throttle trace",
-              "defaultValue": true,
-              "requiredFields": [
-                "realtime.throttle"
-              ]
+              "defaultValue": true
             },
             {
               "id": "traceSettings.includeBrake",
               "type": "toggle",
               "name": "Include brake trace",
-              "defaultValue": true,
-              "requiredFields": [
-                "realtime.brake"
-              ]
+              "defaultValue": true
             },
             {
               "id": "traceSettings.includeClutch",
               "type": "toggle",
               "name": "Include clutch trace",
-              "defaultValue": false,
-              "requiredFields": [
-                "realtime.clutch"
-              ]
+              "defaultValue": false
             },
             {
               "id": "traceSettings.includeSteeringAngle",
               "type": "toggle",
               "name": "Include steering angle trace",
-              "defaultValue": true,
-              "requiredFields": [
-                "realtime.steeringAnglePct"
-              ]
+              "defaultValue": true
             },
             {
               "id": "traceHistorySeconds",
@@ -212,6 +59,16 @@
               "step": 1,
               "unit": "number",
               "defaultValue": 7
+            },
+            {
+              "id": "backgroundOpacity",
+              "type": "slider",
+              "name": "Background opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.01,
+              "unit": "number",
+              "defaultValue": 0.7
             }
           ]
         },
@@ -221,49 +78,40 @@
           "type": "default",
           "settings": [
             {
-              "id": "traceColors.throttle",
+              "id": "colors.throttle",
               "type": "color",
               "name": "Throttle trace color",
-              "defaultValue": "#22c55e",
-              "requiredFields": [
-                "realtime.throttle"
-              ]
+              "defaultValue": "#22c55e"
             },
             {
-              "id": "traceColors.brake",
+              "id": "colors.brake",
               "type": "color",
               "name": "Brake trace color",
-              "defaultValue": "#ef4444",
-              "requiredFields": [
-                "realtime.brake"
-              ]
+              "defaultValue": "#ef4444"
             },
             {
-              "id": "traceColors.clutch",
+              "id": "colors.clutch",
               "type": "color",
               "name": "Clutch trace color",
-              "defaultValue": "#38bdf8",
-              "requiredFields": [
-                "realtime.clutch"
-              ]
+              "defaultValue": "#38bdf8"
             },
             {
-              "id": "traceColors.brakeAbs",
+              "id": "colors.brakeAbs",
               "type": "color",
               "name": "Brake ABS trace color",
-              "defaultValue": "#fefefe",
-              "requiredFields": [
-                "realtime.brake"
-              ]
+              "defaultValue": "#fefefe"
             },
             {
-              "id": "traceColors.steering",
+              "id": "colors.steering",
               "type": "color",
               "name": "Steering angle trace color",
-              "defaultValue": "#1e3a8a",
-              "requiredFields": [
-                "realtime.steeringAnglePct"
-              ]
+              "defaultValue": "#1e3a8a"
+            },
+            {
+              "id": "colors.background",
+              "type": "color",
+              "name": "Background color",
+              "defaultValue": "#202c44"
             }
           ]
         }
