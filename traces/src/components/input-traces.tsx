@@ -172,6 +172,12 @@ export const InputTraces = ({
         color: mergedColors.brake,
         type: "brake",
       });
+    if (includeBrake)
+      traces.push({
+        values: absArray,
+        color: mergedColors.brakeAbs,
+        type: "brakeAbs",
+      });
 
     drawGraph(
       svgRef.current,
