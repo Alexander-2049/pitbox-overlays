@@ -35,7 +35,7 @@ const App = () => {
   const distanceToFinish = trackLength - metersPassed;
   const distanceToFinishFormatted = Math.floor(distanceToFinish);
 
-  if (distanceToFinish < 300) return;
+  if (distanceToFinish > 300) return;
 
   return (
     <div
