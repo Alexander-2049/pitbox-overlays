@@ -1,6 +1,6 @@
 {
-  "title": "Redan: Traces",
-  "description": "Displays live traces (throttle, brake, clutch, steering, ABS).",
+  "title": "Redan: Rolling Start Helper",
+  "description": "Helps in races with Rolling Start",
   "tags": ["Telemetry"],
   "dimentions": {
     "defaultWidth": 800,
@@ -10,112 +10,13 @@
     "maxWidth": 1600,
     "maxHeight": 800
   },
-  "requiredFields": ["realtime.throttle", "realtime.brake"],
-  "optionalFields": [
-    "realtime.steeringAnglePct",
-    "realtime.absActive",
-    "realtime.clutch"
+  "requiredFields": [
+    "drivers[].lapDistPct",
+    "drivers[].lapsCompleted",
+    "drivers[].position",
+    "session.currentSessionType",
+    "session.trackLengthMeters"
   ],
-  "pages": [
-    {
-      "title": "Traces",
-      "icon": "pipe",
-      "groups": [
-        {
-          "id": "trace.settings",
-          "title": "Trace Settings",
-          "type": "default",
-          "settings": [
-            {
-              "id": "traceSettings.includeThrottle",
-              "type": "toggle",
-              "name": "Include throttle trace",
-              "defaultValue": true
-            },
-            {
-              "id": "traceSettings.includeBrake",
-              "type": "toggle",
-              "name": "Include brake trace",
-              "defaultValue": true
-            },
-            {
-              "id": "traceSettings.includeClutch",
-              "type": "toggle",
-              "name": "Include clutch trace",
-              "defaultValue": false
-            },
-            {
-              "id": "traceSettings.includeSteeringAngle",
-              "type": "toggle",
-              "name": "Include steering angle trace",
-              "defaultValue": true
-            },
-            {
-              "id": "traceHistorySeconds",
-              "type": "slider",
-              "name": "Trace history duration (seconds)",
-              "min": 1,
-              "max": 30,
-              "step": 1,
-              "unit": "number",
-              "defaultValue": 7
-            },
-            {
-              "id": "backgroundOpacity",
-              "type": "slider",
-              "name": "Background opacity",
-              "min": 0,
-              "max": 1,
-              "step": 0.01,
-              "unit": "number",
-              "defaultValue": 0.7
-            }
-          ]
-        },
-        {
-          "id": "trace.colors",
-          "title": "Trace Colors",
-          "type": "default",
-          "settings": [
-            {
-              "id": "colors.throttle",
-              "type": "color",
-              "name": "Throttle trace color",
-              "defaultValue": "#22c55e"
-            },
-            {
-              "id": "colors.brake",
-              "type": "color",
-              "name": "Brake trace color",
-              "defaultValue": "#ef4444"
-            },
-            {
-              "id": "colors.clutch",
-              "type": "color",
-              "name": "Clutch trace color",
-              "defaultValue": "#38bdf8"
-            },
-            {
-              "id": "colors.brakeAbs",
-              "type": "color",
-              "name": "Brake ABS trace color",
-              "defaultValue": "#fefefe"
-            },
-            {
-              "id": "colors.steering",
-              "type": "color",
-              "name": "Steering angle trace color",
-              "defaultValue": "#1e3a8a"
-            },
-            {
-              "id": "colors.background",
-              "type": "color",
-              "name": "Background color",
-              "defaultValue": "#202c44"
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  "optionalFields": [],
+  "pages": []
 }

@@ -1,60 +1,93 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 // --- Types ---
-type RealtimeData = {
-  throttle: number;
-  brake: number;
-  steeringAnglePct: number;
-  absActive: boolean;
+type DriversData = {
+  lapDistPct: number;
+  lapsCompleted: number;
+  position: number;
+};
+
+type SessionData = {
+  currentSessionType: string;
+  trackLengthMeters: number;
 };
 
 export type GameData = {
-  realtime: RealtimeData;
+  drivers: DriversData[];
+  session: SessionData;
 };
 
 // --- Validator ---
 // Ожидает объект вида { "realtime.throttle": number, ... }
 function validateGameData(raw: Record<string, unknown>): GameData | null {
   try {
-    // candidate с nullable значениями
-    const candidate = {
-      throttle:
-        typeof raw["realtime.throttle"] === "number"
-          ? raw["realtime.throttle"]
-          : null,
-      brake:
-        typeof raw["realtime.brake"] === "number"
-          ? raw["realtime.brake"]
-          : null,
-      steeringAnglePct:
-        typeof raw["realtime.steeringAnglePct"] === "number"
-          ? raw["realtime.steeringAnglePct"]
-          : null,
-      absActive:
-        typeof raw["realtime.absActive"] === "boolean"
-          ? raw["realtime.absActive"]
-          : null,
-    };
+    // --- session ---
+    const currentSessionType = raw["session.currentSessionType"];
+    const trackLengthMeters = raw["session.trackLengthMeters"];
 
-    // если хоть одно обязательное поле (кроме test) отсутствует — отклоняем
     if (
-      candidate.throttle === null ||
-      candidate.brake === null ||
-      candidate.steeringAnglePct === null ||
-      candidate.absActive === null
+      typeof currentSessionType !== "string" ||
+      typeof trackLengthMeters !== "number"
     ) {
-      // не готовы — вернём null
       return null;
     }
 
-    const realtime: RealtimeData = {
-      throttle: candidate.throttle,
-      brake: candidate.brake,
-      steeringAnglePct: candidate.steeringAnglePct,
-      absActive: candidate.absActive,
-    };
+    // --- drivers arrays ---
+    const lapDistPct = raw["drivers[].lapDistPct"];
+    const lapsCompleted = raw["drivers[].lapsCompleted"];
+    const position = raw["drivers[].position"];
 
-    return { realtime };
+    if (
+      !Array.isArray(lapDistPct) ||
+      !Array.isArray(lapsCompleted) ||
+      !Array.isArray(position)
+    ) {
+      return null;
+    }
+
+    const length = Math.min(
+      lapDistPct.length,
+      lapsCompleted.length,
+      position.length
+    );
+
+    const drivers: DriversData[] = [];
+
+    for (let i = 0; i < length; i++) {
+      const ld = lapDistPct[i];
+      const lc = lapsCompleted[i];
+      const pos = position[i];
+
+      // server uses -1 as "invalid"
+      if (
+        typeof ld !== "number" ||
+        typeof lc !== "number" ||
+        typeof pos !== "number" ||
+        ld < 0 ||
+        lc < 0 ||
+        pos < 0
+      ) {
+        continue;
+      }
+
+      drivers.push({
+        lapDistPct: ld,
+        lapsCompleted: lc,
+        position: pos,
+      });
+    }
+
+    if (drivers.length === 0) {
+      return null;
+    }
+
+    return {
+      drivers,
+      session: {
+        currentSessionType,
+        trackLengthMeters,
+      },
+    };
   } catch (err) {
     console.error("validateGameData exception:", err);
     return null;
@@ -67,10 +100,11 @@ const useGameData = () => {
 
   const params = useMemo(
     () => [
-      "realtime.throttle",
-      "realtime.brake",
-      "realtime.steeringAnglePct",
-      "realtime.absActive",
+      "drivers[].lapDistPct",
+      "drivers[].lapsCompleted",
+      "drivers[].position",
+      "session.currentSessionType",
+      "session.trackLengthMeters",
     ],
     []
   );

@@ -3,7 +3,7 @@ interface Props {
 }
 
 const DistanceFromLeaderToFinish = ({ distanceMeters }: Props) => {
-  return <div></div>;
+  return <div style={{ fontSize: "100vh" }}>{distanceMeters}</div>;
 };
 
 export default DistanceFromLeaderToFinish;

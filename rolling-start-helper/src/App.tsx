@@ -1,11 +1,24 @@
 import "./index.css";
 import useGameData from "./hooks/useGameData";
-import Inputs from "./components/inputs";
-import { useParameters } from "./hooks/useParameters";
+import DistanceFromLeaderToFinish from "./components/DistanceFromLeaderToFinish";
 
 const App = () => {
   const { data } = useGameData();
-  const parameters = useParameters();
+
+  if (!data || data.session.currentSessionType !== "RACE") return;
+
+  const raceLeader = data.drivers.find((driver) => driver.position === 1);
+
+  if (!raceLeader) return;
+  if (raceLeader.lapsCompleted > 0) return;
+
+  const trackLength = data.session.trackLengthMeters;
+  const leaderDistanceFromStartTofinishInPercents = raceLeader.lapDistPct;
+  const metersPassed = leaderDistanceFromStartTofinishInPercents * trackLength;
+  const distanceToFinish = trackLength - metersPassed;
+  const distanceToFinishFormatted = Math.floor(distanceToFinish);
+
+  if (distanceToFinish < 300) return;
 
   return (
     <div
@@ -17,13 +30,7 @@ const App = () => {
         flexDirection: "row",
       }}
     >
-      <Inputs
-        input={data?.realtime}
-        colors={parameters.colors}
-        backgroundOpacity={parameters.backgroundOpacity}
-        traceHistorySeconds={parameters.traceHistorySeconds}
-        traceVisibility={parameters.traceVisibility}
-      />
+      <DistanceFromLeaderToFinish distanceMeters={distanceToFinishFormatted} />
     </div>
   );
 };
