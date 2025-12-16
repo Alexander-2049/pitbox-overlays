@@ -5,6 +5,23 @@ import DistanceFromLeaderToFinish from "./components/DistanceFromLeaderToFinish"
 const App = () => {
   const { data } = useGameData();
 
+  const isPreview = /\bpreview(\b|=true)/.test(window.location.search);
+  if (isPreview) {
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "row",
+        }}
+      >
+        <DistanceFromLeaderToFinish distanceMeters={300} />
+      </div>
+    );
+  }
+
   if (!data || data.session.currentSessionType !== "RACE") return;
 
   const raceLeader = data.drivers.find((driver) => driver.position === 1);
