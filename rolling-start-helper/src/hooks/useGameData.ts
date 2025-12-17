@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 // --- Types ---
 type DriversData = {
   lapDistPct: number;
-  lapsCompleted: number;
-  position: number;
+  currentLap: number;
+  isCarOnTrack: boolean;
 };
 
 type SessionData = {
@@ -34,46 +34,45 @@ function validateGameData(raw: Record<string, unknown>): GameData | null {
 
     // --- drivers arrays ---
     const lapDistPct = raw["drivers[].lapDistPct"];
-    const lapsCompleted = raw["drivers[].lapsCompleted"];
-    const position = raw["drivers[].position"];
+    const currentLap = raw["drivers[].currentLap"];
+    const isCarOnTrack = raw["drivers[].isCarOnTrack"];
 
     if (
       !Array.isArray(lapDistPct) ||
-      !Array.isArray(lapsCompleted) ||
-      !Array.isArray(position)
+      !Array.isArray(currentLap) ||
+      !Array.isArray(isCarOnTrack)
     ) {
       return null;
     }
 
     const length = Math.min(
       lapDistPct.length,
-      lapsCompleted.length,
-      position.length
+      currentLap.length,
+      isCarOnTrack.length
     );
 
     const drivers: DriversData[] = [];
 
     for (let i = 0; i < length; i++) {
       const ld = lapDistPct[i];
-      const lc = lapsCompleted[i];
-      const pos = position[i];
+      const cl = currentLap[i];
+      const ot = isCarOnTrack[i];
 
       // server uses -1 as "invalid"
       if (
         typeof ld !== "number" ||
-        typeof lc !== "number" ||
-        typeof pos !== "number" ||
+        typeof cl !== "number" ||
+        typeof ot !== "boolean" ||
         ld < 0 ||
-        lc < 0 ||
-        pos < 0
+        cl < 0
       ) {
         continue;
       }
 
       drivers.push({
         lapDistPct: ld,
-        lapsCompleted: lc,
-        position: pos,
+        currentLap: cl,
+        isCarOnTrack: ot,
       });
     }
 
@@ -101,8 +100,8 @@ const useGameData = () => {
   const params = useMemo(
     () => [
       "drivers[].lapDistPct",
-      "drivers[].lapsCompleted",
-      "drivers[].position",
+      "drivers[].currentLap",
+      "drivers[].isCarOnTrack",
       "session.currentSessionType",
       "session.trackLengthMeters",
     ],

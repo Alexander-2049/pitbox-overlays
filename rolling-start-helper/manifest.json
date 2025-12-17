@@ -3,17 +3,17 @@
   "description": "Helps in races with Rolling Start",
   "tags": ["Telemetry"],
   "dimentions": {
-    "defaultWidth": 800,
-    "defaultHeight": 150,
+    "defaultWidth": 400,
+    "defaultHeight": 50,
     "minWidth": 200,
-    "minHeight": 50,
+    "minHeight": 20,
     "maxWidth": 1600,
-    "maxHeight": 800
+    "maxHeight": 2000
   },
   "requiredFields": [
     "drivers[].lapDistPct",
-    "drivers[].lapsCompleted",
-    "drivers[].position",
+    "drivers[].currentLap",
+    "drivers[].isCarOnTrack",
     "session.currentSessionType",
     "session.trackLengthMeters"
   ],
