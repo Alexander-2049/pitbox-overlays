@@ -7,6 +7,9 @@ const App = () => {
   const { data } = useGameData();
   const threshold = 150;
 
+  const [showDistance, setShowDistance] = React.useState(true);
+  const prevDistanceRef = React.useRef<number | null>(null);
+
   const isPreview = /\bpreview(\b|=true)/.test(window.location.search);
   if (isPreview) {
     return (() => {
@@ -41,10 +44,10 @@ const App = () => {
     })();
   }
 
-  if (!data || data.session.currentSessionType !== "RACE") return;
+  if (!data || data.session.currentSessionType !== "RACE") return null;
 
   for (let i = 0; i < data.drivers.length; i++) {
-    if (data.drivers[i].currentLap > 0) return;
+    if (data.drivers[i].currentLap > 0) return null;
   }
 
   const raceLeader = data.drivers
@@ -55,15 +58,26 @@ const App = () => {
       null as (typeof data.drivers)[number] | null
     );
 
-  if (!raceLeader) return;
+  if (!raceLeader) return null;
 
   const trackLength = data.session.trackLengthMeters;
-  const leaderDistanceFromStartTofinishInPercents = raceLeader.lapDistPct;
-  const metersPassed = leaderDistanceFromStartTofinishInPercents * trackLength;
-  const distanceToFinish = trackLength - metersPassed;
-  const distanceToFinishFormatted = Math.floor(distanceToFinish);
+  const metersPassed = raceLeader.lapDistPct * trackLength;
+  const distanceToFinishFormatted = Math.floor(trackLength - metersPassed);
 
-  if (distanceToFinish > threshold) return;
+  if (distanceToFinishFormatted > threshold) return null;
+
+  // Detect increase and hide component temporarily
+  React.useEffect(() => {
+    if (
+      prevDistanceRef.current !== null &&
+      distanceToFinishFormatted > prevDistanceRef.current
+    ) {
+      setShowDistance(false);
+      const timer = setTimeout(() => setShowDistance(true), 750);
+      return () => clearTimeout(timer);
+    }
+    prevDistanceRef.current = distanceToFinishFormatted;
+  }, [distanceToFinishFormatted]);
 
   return (
     <div
@@ -75,10 +89,12 @@ const App = () => {
         flexDirection: "row",
       }}
     >
-      <DistanceFromLeaderToFinish
-        distanceMeters={distanceToFinishFormatted}
-        threshold={threshold}
-      />
+      {showDistance && (
+        <DistanceFromLeaderToFinish
+          distanceMeters={distanceToFinishFormatted}
+          threshold={threshold}
+        />
+      )}
     </div>
   );
 };
