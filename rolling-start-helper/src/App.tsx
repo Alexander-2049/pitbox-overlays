@@ -1,53 +1,60 @@
 import "./index.css";
 import useGameData from "./hooks/useGameData";
 import DistanceFromLeaderToFinish from "./components/DistanceFromLeaderToFinish";
+import PreviewComponent from "./components/PreviewComponent";
 import React from "react";
 
 const App = () => {
-  const { data } = useGameData();
   const threshold = 150;
+  const delayMs = 1 * 1000; // N seconds * 1000 = ms
 
-  const [showDistance, setShowDistance] = React.useState(true);
-  const prevDistanceRef = React.useRef<number | null>(null);
+  const [prevLapDistPct, setPrevLapDistPct] = React.useState<number>(0);
+  const [nextShowTime, setNextShowTime] = React.useState(0);
+
+  const { data } = useGameData();
+
+  React.useEffect(() => {
+    if (!data) return;
+    const raceLeader = data.drivers
+      .filter((driver) => driver.isCarOnTrack && driver.lapDistPct > 0.5)
+      .reduce(
+        (leader, driver) =>
+          !leader || driver.lapDistPct > leader.lapDistPct ? driver : leader,
+        null as (typeof data.drivers)[number] | null
+      );
+    if (!raceLeader) {
+      setNextShowTime(0);
+      setPrevLapDistPct(0);
+      return;
+    }
+    setPrevLapDistPct(raceLeader.lapDistPct);
+    if (raceLeader.lapDistPct < prevLapDistPct) {
+      setNextShowTime(Date.now() + delayMs);
+    }
+  }, [prevLapDistPct, data]);
 
   const isPreview = /\bpreview(\b|=true)/.test(window.location.search);
   if (isPreview) {
-    return (() => {
-      const [progress, setProgress] = React.useState(0);
-
-      React.useEffect(() => {
-        const interval = setInterval(() => {
-          setProgress((prev) => (prev + 1) % (threshold * 2));
-        }, 10);
-        return () => clearInterval(interval);
-      }, []);
-
-      const distance =
-        progress < threshold ? threshold - progress : progress - threshold;
-
-      return (
-        <div
-          style={{
-            width: "100vw",
-            height: "100vh",
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "row",
-          }}
-        >
-          <DistanceFromLeaderToFinish
-            distanceMeters={Math.floor(distance)}
-            threshold={threshold}
-          />
-        </div>
-      );
-    })();
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "row",
+        }}
+      >
+        <PreviewComponent threshold={threshold} />
+      </div>
+    );
   }
 
-  if (!data || data.session.currentSessionType !== "RACE") return null;
+  if (nextShowTime > Date.now()) return;
+  if (!data || data.session.currentSessionType !== "RACE") return;
 
   for (let i = 0; i < data.drivers.length; i++) {
-    if (data.drivers[i].currentLap > 0) return null;
+    if (data.drivers[i].currentLap > 0) return;
   }
 
   const raceLeader = data.drivers
@@ -57,27 +64,16 @@ const App = () => {
         !leader || driver.lapDistPct > leader.lapDistPct ? driver : leader,
       null as (typeof data.drivers)[number] | null
     );
-
-  if (!raceLeader) return null;
-
   const trackLength = data.session.trackLengthMeters;
-  const metersPassed = raceLeader.lapDistPct * trackLength;
-  const distanceToFinishFormatted = Math.floor(trackLength - metersPassed);
+  const leaderDistanceFromStartTofinishInPercents =
+    raceLeader?.lapDistPct || threshold;
+  const metersPassed = leaderDistanceFromStartTofinishInPercents * trackLength;
+  const distanceToFinish = trackLength - metersPassed + 1;
+  const distanceToFinishFormatted = Math.floor(distanceToFinish);
 
-  if (distanceToFinishFormatted > threshold) return null;
-
-  // Detect increase and hide component temporarily
-  React.useEffect(() => {
-    if (
-      prevDistanceRef.current !== null &&
-      distanceToFinishFormatted > prevDistanceRef.current
-    ) {
-      setShowDistance(false);
-      const timer = setTimeout(() => setShowDistance(true), 750);
-      return () => clearTimeout(timer);
-    }
-    prevDistanceRef.current = distanceToFinishFormatted;
-  }, [distanceToFinishFormatted]);
+  if (!raceLeader) return;
+  if (distanceToFinish > threshold) return;
+  if (distanceToFinish < 0) return;
 
   return (
     <div
@@ -89,12 +85,10 @@ const App = () => {
         flexDirection: "row",
       }}
     >
-      {showDistance && (
-        <DistanceFromLeaderToFinish
-          distanceMeters={distanceToFinishFormatted}
-          threshold={threshold}
-        />
-      )}
+      <DistanceFromLeaderToFinish
+        distanceMeters={distanceToFinishFormatted}
+        threshold={threshold}
+      />
     </div>
   );
 };
